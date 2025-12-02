@@ -27,9 +27,22 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 | ファイル | 注意点 |
 |---------|--------|
 | template/.ai/context.md | 穴埋め形式を維持。具体的すぎる例は避ける |
-| template/.ai/commands/*.md | ツール非依存を維持 |
+| template/.ai/agents/_index.md | トリガー情報を集約。個別ファイルにトリガーを書かない |
+| template/.ai/agents/*.md | 対話向け（設計相談等）のみ。アクション実行はコマンドへ |
+| template/.ai/commands/*.md | ツール非依存を維持。1:1対応ならエージェントと統合 |
+| template/.ai/references/ | チェックリスト・テンプレート等の参照用ファイル |
 | template/scripts/*.sh | POSIX互換を維持（bash依存OK） |
 | examples/**/context.md | 実際に使える具体例を記載 |
+| plan.md | 一時ファイル。docs/やwork/に保存しない。プロジェクトルートに配置し実装後削除 |
+
+### エージェント vs コマンドの使い分け
+
+| 種類 | 用途 | 例 |
+|-----|------|-----|
+| エージェント | 対話・相談向け | architect（設計相談） |
+| コマンド | アクション実行 | /code-review（レビュー実行） |
+
+**判断基準**: 1:1対応ならコマンドに統合してシンプルに保つ
 
 ### 破壊的変更の定義
 - template/ のディレクトリ構造変更
