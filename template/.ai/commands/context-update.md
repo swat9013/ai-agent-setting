@@ -47,6 +47,7 @@ context.md の現在の行数を確認：
 | プロジェクト全般のルール | .ai/context.md | 高シグナル情報のみ |
 | 確定した設計判断（ADR形式） | docs/decisions/ADR-xxx.md | → テンプレート参照 |
 | 詳細なガイドライン | docs/guidelines/xxx.md | 手順・詳細説明 |
+| システム構成・設計図 | docs/architecture/xxx.md | 全体像・図解 |
 | 専門ワークフロー | .ai/agents/xxx.md | 新規エージェント |
 
 ### ADR（Architecture Decision Record）の作成基準
