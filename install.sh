@@ -1,0 +1,56 @@
+#!/bin/bash
+# AI Context Template Installer
+# Downloads and sets up the template in your project
+
+set -e
+
+REPO="your-org/ai-coding-setting"
+BRANCH="main"
+
+echo "=== AI Context Template Installer ==="
+echo ""
+
+# Check if already initialized
+if [ -d ".ai" ]; then
+    read -p ".ai directory already exists. Overwrite? [y/N] " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+fi
+
+# Download template
+echo "Downloading template..."
+curl -sL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" -o /tmp/ai-context-template.tar.gz
+
+# Extract template/ directory
+echo "Extracting..."
+tar -xzf /tmp/ai-context-template.tar.gz -C /tmp
+cp -r /tmp/ai-coding-setting-$BRANCH/template/* .
+
+# Cleanup
+rm -rf /tmp/ai-context-template.tar.gz /tmp/ai-coding-setting-$BRANCH
+
+# Set permissions
+chmod +x scripts/*.sh 2>/dev/null || true
+
+echo ""
+echo "Template installed successfully!"
+echo ""
+
+# Git hooks setup (optional)
+if [ -d ".git" ]; then
+    read -p "Setup Git hooks for automatic sync? [y/N] " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        bash scripts/setup-hooks.sh
+    fi
+fi
+
+echo ""
+echo "Next steps:"
+echo "  1. Edit .ai/context.md to add your project context"
+echo "  2. Run: bash scripts/sync-context.sh"
+echo ""
+echo "Done!"
