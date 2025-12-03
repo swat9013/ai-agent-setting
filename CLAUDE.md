@@ -20,7 +20,10 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 ### コンテキスト設計の原則
 - 最小限の高シグナル情報で効果を最大化
 - 適切な抽象度を保つ（硬直的すぎず、曖昧すぎず）
-- 詳細は参照パターンで対応（docs/へのリンク）
+- 詳細リンクは「分離した場合のみ」追加（デフォルトで書かない）
+  - 全セクションにリンクがあるとAIが無駄に探索する
+- 分量が少なく常に参照されるべき内容は分離せず統合する
+  - ファイル分離 → 参照 → 読み込みのオーバーヘッドを避ける
 
 ### ファイル編集時の注意
 
@@ -31,7 +34,7 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 | template/.ai/agents/*.md | 対話向け（設計相談等）のみ。アクション実行はコマンドへ |
 | template/.ai/commands/*.md | ツール非依存を維持。1:1対応ならエージェントと統合 |
 | template/.ai/references/ | チェックリスト・テンプレート等の参照用ファイル |
-| template/scripts/*.sh | POSIX互換を維持（bash依存OK） |
+| template/scripts/*.py | Python 3 標準ライブラリのみ使用（追加インストール不要） |
 | examples/**/context.md | 実際に使える具体例を記載 |
 | plan.md | 一時ファイル。docs/やwork/に保存しない。プロジェクトルートに配置し実装後削除 |
 
@@ -54,6 +57,24 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 1. CHANGELOG.md を更新
 2. バージョンタグを作成: `git tag v1.x.x`
 3. プッシュ: `git push origin v1.x.x`
+
+## 開発ツール
+
+### コンテキスト規模の計測
+
+```bash
+python3 template/scripts/measure-context.py
+```
+
+コンテキストファイルの行数・トークン数を計測。閾値超過をチェック。
+
+| オプション | 対象 | 閾値（トークン: 推奨/上限） |
+|-----------|------|---------------------------|
+| --context | .ai/context.md | 1,500 / 2,000 |
+| --agents | .ai/agents/*.md | 3,000 / 5,000 |
+| --commands | .ai/commands/*.md | 1,500 / 2,000 |
+| --references | .ai/references/**/*.md | 3,000 / 5,000 |
+| --docs | docs/**/*.md | 3,000 / 5,000 |
 
 ## よくある改善パターン
 
