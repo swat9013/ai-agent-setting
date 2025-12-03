@@ -1,1 +1,6 @@
 .claude/settings.local.json
+template/.claude
+template/.cursor
+template/.github
+template/AGENTS.md
+template/CLAUDE.md

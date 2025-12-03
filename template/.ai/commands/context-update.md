@@ -1,3 +1,11 @@
+---
+type: command
+name: context-update
+description: セッションを振り返り、コンテキストファイルを更新する
+usage:
+  - /context-update
+---
+
 # Context Update Command
 
 セッションを振り返り、コンテキストを更新する。

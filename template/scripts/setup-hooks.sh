@@ -19,7 +19,7 @@ mkdir -p "$HOOKS_DIR"
 # Create or append to pre-commit hook
 if [ -f "$PRE_COMMIT" ]; then
     # Check if already configured
-    if grep -q "sync-context.sh" "$PRE_COMMIT"; then
+    if grep -q "sync-context" "$PRE_COMMIT"; then
         echo "Pre-commit hook already configured"
         exit 0
     fi
@@ -32,9 +32,12 @@ else
 fi
 
 cat >> "$PRE_COMMIT" << 'EOF'
-if [ -f "scripts/sync-context.sh" ]; then
-    bash scripts/sync-context.sh
-    git add .cursorrules .github/copilot-instructions.md CLAUDE.md .cursor/rules/ 2>/dev/null || true
+if [ -f "scripts/sync-context.py" ]; then
+    python3 scripts/sync-context.py
+    git add AGENTS.md CLAUDE.md \
+        .cursor/rules/ .cursor/commands/ \
+        .github/instructions/ \
+        .claude/commands/ .claude/agents/ 2>/dev/null || true
 fi
 EOF
 
