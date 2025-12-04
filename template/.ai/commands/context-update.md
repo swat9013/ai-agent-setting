@@ -10,6 +10,12 @@ usage:
 
 セッションを振り返り、コンテキストを更新する。
 
+## 前提
+
+- `.ai/context.md` が唯一の真実の源（SSOT）
+- `AGENTS.md`, `CLAUDE.md` 等は `sync-context.py` で自動生成される出力
+- 編集は必ず `.ai/context.md` に対して行う
+
 ## 手順
 
 ### 1. 抽出
@@ -23,7 +29,7 @@ usage:
 
 ### 3. 規模チェック
 ```bash
-python3 scripts/measure-context.py
+python3 .ai/scripts/measure-context.py
 ```
 閾値超過時は追記前に圧縮。
 
@@ -39,6 +45,13 @@ python3 scripts/measure-context.py
 ADRテンプレート: `.ai/references/templates/adr.md`
 
 エージェント＝対話・相談向け、コマンド＝アクション実行。1:1対応ならコマンドに統合。
+
+### 5. 同期
+context.md 更新後は各ツール向けファイルを同期:
+```bash
+python3 .ai/scripts/sync-context.py
+```
+同期先: `AGENTS.md`, `CLAUDE.md`, `.cursor/`, `.github/instructions/`, `.claude/`
 
 ## 圧縮方針
 1. 重複統合  2. 表現簡潔化  3. 詳細は docs/ へ分離  4. 古い情報は削除

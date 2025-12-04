@@ -137,7 +137,7 @@ def main():
     if not selected:
         selected = list(TARGETS.keys())
 
-    project_root = Path(__file__).parent.parent
+    project_root = Path(__file__).parent.parent.parent
     result = {}
 
     for name in selected:
