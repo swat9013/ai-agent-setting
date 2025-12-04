@@ -27,7 +27,15 @@ curl -sL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" -o /tmp/ai
 # Extract template/ directory
 echo "Extracting..."
 tar -xzf /tmp/ai-agent-setting.tar.gz -C /tmp
-cp -r /tmp/ai-agent-setting-$BRANCH/template/* .
+
+# Copy .ai and docs (exclude .gitignore to preserve existing one)
+cp -r /tmp/ai-agent-setting-$BRANCH/template/.ai .
+cp -r /tmp/ai-agent-setting-$BRANCH/template/docs .
+
+# Copy .gitignore only if it doesn't exist
+if [ ! -f ".gitignore" ]; then
+    cp /tmp/ai-agent-setting-$BRANCH/template/.gitignore .
+fi
 
 # Cleanup
 rm -rf /tmp/ai-agent-setting.tar.gz /tmp/ai-agent-setting-$BRANCH
