@@ -598,7 +598,7 @@ Zustandを採用
 ### 11.1 リポジトリ構成
 
 ```
-ai-context-template/
+ai-agent-setting/
 ├── README.md                    # 使い方・クイックスタート
 ├── CHANGELOG.md                 # テンプレートの変更履歴
 ├── LICENSE
@@ -647,7 +647,7 @@ ai-context-template/
 
 ```bash
 # 初期化スクリプトを実行（既存プロジェクトに追加）
-curl -sL https://raw.githubusercontent.com/your-org/ai-context-template/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/swat9013/ai-agent-setting/main/install.sh | bash
 ```
 
 `install.sh` の内容：
@@ -656,13 +656,13 @@ curl -sL https://raw.githubusercontent.com/your-org/ai-context-template/main/ins
 #!/bin/bash
 set -e
 
-REPO="your-org/ai-context-template"
+REPO="swat9013/ai-agent-setting"
 BRANCH="main"
 
 echo "=== AI Context Template Installer ==="
 
 # template/ 配下をダウンロード
-curl -sL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" | tar xz --strip=2 "ai-context-template-$BRANCH/template"
+curl -sL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" | tar xz --strip=2 "ai-agent-setting-$BRANCH/template"
 
 # 実行権限を付与
 chmod +x scripts/*.sh 2>/dev/null || true
@@ -680,7 +680,7 @@ echo "✅ Done! Edit .ai/context.md to customize."
 ### 11.4 継続的改善のフロー
 
 ```
-ai-context-template（テンプレートリポジトリ）
+ai-agent-setting（テンプレートリポジトリ）
     │
     │  [リリース]
     ├── v1.0.0 ──→ プロジェクトA が採用
@@ -703,10 +703,10 @@ ai-context-template（テンプレートリポジトリ）
 
 ```bash
 # 1. 変更点を確認
-curl -s https://raw.githubusercontent.com/your-org/ai-context-template/main/CHANGELOG.md
+curl -s https://raw.githubusercontent.com/swat9013/ai-agent-setting/main/CHANGELOG.md
 
 # 2. 必要なファイルだけ取得
-curl -sO https://raw.githubusercontent.com/your-org/ai-context-template/main/template/.ai/commands/context-update.md
+curl -sO https://raw.githubusercontent.com/swat9013/ai-agent-setting/main/template/.ai/commands/context-update.md
 
 # 3. または差分を確認して手動マージ
 ```

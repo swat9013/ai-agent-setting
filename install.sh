@@ -4,7 +4,7 @@
 
 set -e
 
-REPO="your-org/ai-coding-setting"
+REPO="swat9013/ai-agent-setting"
 BRANCH="main"
 
 echo "=== AI Context Template Installer ==="
@@ -22,15 +22,15 @@ fi
 
 # Download template
 echo "Downloading template..."
-curl -sL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" -o /tmp/ai-context-template.tar.gz
+curl -sL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" -o /tmp/ai-agent-setting.tar.gz
 
 # Extract template/ directory
 echo "Extracting..."
-tar -xzf /tmp/ai-context-template.tar.gz -C /tmp
-cp -r /tmp/ai-coding-setting-$BRANCH/template/* .
+tar -xzf /tmp/ai-agent-setting.tar.gz -C /tmp
+cp -r /tmp/ai-agent-setting-$BRANCH/template/* .
 
 # Cleanup
-rm -rf /tmp/ai-context-template.tar.gz /tmp/ai-coding-setting-$BRANCH
+rm -rf /tmp/ai-agent-setting.tar.gz /tmp/ai-agent-setting-$BRANCH
 
 # Set permissions
 chmod +x .ai/scripts/*.sh 2>/dev/null || true

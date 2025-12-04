@@ -1,4 +1,4 @@
-# ai-coding-setting
+# ai-agent-setting
 
 AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot等）向けのコンテキスト管理テンプレート。
 
@@ -20,14 +20,15 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 ### インストール
 
 ```bash
-curl -sL https://raw.githubusercontent.com/your-org/ai-coding-setting/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/swat9013/ai-agent-setting/main/install.sh | bash
 ```
 
 または手動でコピー:
 
 ```bash
-git clone https://github.com/your-org/ai-coding-setting.git
-cp -r ai-coding-setting/template/* your-project/
+git clone https://github.com/swat9013/ai-agent-setting.git
+cp -r ai-agent-setting/template/.ai your-project/
+cp -r ai-agent-setting/template/docs your-project/
 ```
 
 ### セットアップ
@@ -37,30 +38,51 @@ cp -r ai-coding-setting/template/* your-project/
 vi .ai/context.md
 
 # 2. ツール固有ファイルへ同期
-bash scripts/sync-context.sh
+python3 .ai/scripts/sync-context.py
 
 # 3. (オプション) Git hooks を設定
-bash scripts/setup-hooks.sh
+bash .ai/scripts/setup-hooks.sh
 ```
 
-## ディレクトリ構造
+## リポジトリ構造
+
+```
+ai-agent-setting/
+├── template/              # 配布される本体
+│   ├── .ai/
+│   │   ├── context.md     # メインコンテキスト（穴埋め形式）
+│   │   ├── agents/        # エージェント定義
+│   │   ├── commands/      # コマンドテンプレート
+│   │   ├── references/    # チェックリスト・テンプレート等
+│   │   └── scripts/       # ユーティリティスクリプト
+│   └── docs/              # プロジェクト用ドキュメント雛形
+├── docs/                  # 本テンプレートの設計書・ガイド
+├── examples/              # 技術スタック別サンプル
+├── install.sh             # インストーラー
+└── CHANGELOG.md           # 変更履歴
+```
+
+### 導入後のプロジェクト構造
 
 ```
 your-project/
 ├── .ai/                      # AIコンテキスト（SSOT）
 │   ├── context.md            # メインコンテキスト
 │   ├── agents/               # エージェント定義
-│   │   ├── _index.md
-│   │   └── context-curator.md
-│   └── commands/             # コマンドテンプレート
-│       └── context-update.md
+│   │   └── architect.md      # 設計相談エージェント
+│   ├── commands/             # コマンドテンプレート
+│   │   ├── code-review.md
+│   │   ├── context-update.md
+│   │   ├── critical-think.md
+│   │   └── debug.md
+│   ├── references/           # 参照用ファイル
+│   │   ├── checklists/
+│   │   └── templates/
+│   └── scripts/              # ユーティリティ
+│       ├── measure-context.py
+│       ├── sync-context.py
+│       └── setup-hooks.sh
 ├── docs/                     # 詳細ドキュメント
-│   ├── guidelines/
-│   ├── architecture/
-│   └── decisions/
-├── scripts/                  # ユーティリティスクリプト
-│   ├── sync-context.sh
-│   └── setup-hooks.sh
 ├── .cursorrules              # Cursor用（自動生成）
 ├── .github/
 │   └── copilot-instructions.md  # Copilot用（自動生成）
@@ -71,30 +93,31 @@ your-project/
 
 ### コンテキストの更新
 
-会話から有用な情報を得たら、`/context-update` コマンド（または `.ai/commands/context-update.md` のプロンプト）を使用してコンテキストを更新します。
+会話から有用な情報を得たら、`/context-update` コマンドを使用してコンテキストを更新します。
 
 ### 同期
 
 `.ai/context.md` を編集した後、同期スクリプトを実行:
 
 ```bash
-bash scripts/sync-context.sh
+python3 .ai/scripts/sync-context.py
 ```
 
 Git hooks を設定している場合は、コミット時に自動同期されます。
 
-### 圧縮
+### コンテキストの計測
 
-context.md が200行を超えたら圧縮を検討してください:
+コンテキストの規模を計測し、閾値超過をチェック:
 
-1. 重複の統合
-2. 詳細を docs/ に分離
-3. 古い情報の削除
+```bash
+python3 .ai/scripts/measure-context.py
+python3 .ai/scripts/measure-context.py --context  # context.md のみ
+```
 
 ## ベストプラクティス
 
-- **context.md は200行以内に保つ**
-- **詳細は docs/ に分離し、参照パターンを使う**
+- **context.md は簡潔に保つ**（推奨 1,500トークン以内）
+- **詳細は docs/ に分離し、必要に応じて参照する**
 - **適切な抽象度を保つ**（硬直的すぎず、曖昧すぎず）
 - **定期的に整理・圧縮する**
 
