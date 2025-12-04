@@ -30,11 +30,10 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 | ファイル | 注意点 |
 |---------|--------|
 | template/.ai/context.md | 穴埋め形式を維持。具体的すぎる例は避ける |
-| template/.ai/agents/_index.md | トリガー情報を集約。個別ファイルにトリガーを書かない |
 | template/.ai/agents/*.md | 対話向け（設計相談等）のみ。アクション実行はコマンドへ |
 | template/.ai/commands/*.md | ツール非依存を維持。1:1対応ならエージェントと統合 |
 | template/.ai/references/ | チェックリスト・テンプレート等の参照用ファイル |
-| template/scripts/*.py | Python 3 標準ライブラリのみ使用（追加インストール不要） |
+| template/.ai/scripts/*.py | Python 3 標準ライブラリのみ使用（追加インストール不要） |
 | examples/**/context.md | 実際に使える具体例を記載 |
 | plan.md | 一時ファイル。docs/やwork/に保存しない。プロジェクトルートに配置し実装後削除 |
 
@@ -63,7 +62,7 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 ### コンテキスト規模の計測
 
 ```bash
-python3 template/scripts/measure-context.py
+python3 template/.ai/scripts/measure-context.py
 ```
 
 コンテキストファイルの行数・トークン数を計測。閾値超過をチェック。

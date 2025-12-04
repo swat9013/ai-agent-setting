@@ -32,8 +32,8 @@ else
 fi
 
 cat >> "$PRE_COMMIT" << 'EOF'
-if [ -f "scripts/sync-context.py" ]; then
-    python3 scripts/sync-context.py
+if [ -f ".ai/scripts/sync-context.py" ]; then
+    python3 .ai/scripts/sync-context.py
     git add AGENTS.md CLAUDE.md \
         .cursor/rules/ .cursor/commands/ \
         .github/instructions/ \

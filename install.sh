@@ -33,7 +33,7 @@ cp -r /tmp/ai-coding-setting-$BRANCH/template/* .
 rm -rf /tmp/ai-context-template.tar.gz /tmp/ai-coding-setting-$BRANCH
 
 # Set permissions
-chmod +x scripts/*.sh 2>/dev/null || true
+chmod +x .ai/scripts/*.sh 2>/dev/null || true
 
 echo ""
 echo "Template installed successfully!"
@@ -44,13 +44,13 @@ if [ -d ".git" ]; then
     read -p "Setup Git hooks for automatic sync? [y/N] " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        bash scripts/setup-hooks.sh
+        bash .ai/scripts/setup-hooks.sh
     fi
 fi
 
 echo ""
 echo "Next steps:"
 echo "  1. Edit .ai/context.md to add your project context"
-echo "  2. Run: bash scripts/sync-context.sh"
+echo "  2. Run: python3 .ai/scripts/sync-context.py"
 echo ""
 echo "Done!"
