@@ -37,12 +37,16 @@
 
 ### 新しいエージェントを作成
 
-1. `.ai/agents/` に新しいファイルを作成
-2. `_index.md` に追加
+`.ai/agents/` にファイルを作成し、フロントマターで定義：
 
 例: `.ai/agents/code-reviewer.md`
 
 ```markdown
+---
+name: code-reviewer
+description: コードレビューとベストプラクティスの提案
+---
+
 # Code Reviewer
 
 ## 役割

@@ -116,8 +116,7 @@ project-root/
 ├── .ai/                           # 汎用AIコンテキスト（SSOT）
 │   ├── context.md                 # メインコンテキスト
 │   ├── agents/                    # エージェント定義（対話・相談向け）
-│   │   ├── _index.md              # エージェント一覧
-│   │   └── architect.md           # 設計相談
+│   │   └── architect.md           # 設計相談（フロントマターで定義）
 │   ├── commands/                  # コマンド（アクション実行向け）
 │   │   ├── context-update.md      # コンテキスト更新
 │   │   ├── code-review.md         # コードレビュー実行
@@ -357,29 +356,24 @@ context.md の現在の行数を確認：
 
 ```
 .ai/agents/
-├── _index.md              # エージェント一覧
 ├── code-reviewer.md       # コードレビュー専門
 └── context-curator.md     # コンテキスト管理専門
 ```
 
-### 8.2 インデックスファイル
+各ファイルはフロントマターでメタデータを定義。
 
-`.ai/agents/_index.md`:
+### 8.2 フロントマター形式
 
-```markdown
-# Project Agents
+各エージェントファイルの先頭にYAMLフロントマターを記述：
 
-## エージェント一覧
-
-| エージェント | ファイル | 役割 |
-|-------------|---------|------|
-| Code Reviewer | code-reviewer.md | コードレビューとベストプラクティス提案 |
-| Context Curator | context-curator.md | コンテキストファイルの品質管理 |
-
-## 共通ルール
-- 各エージェントはプロジェクトの context.md に従う
-- 不明点は推測せず確認を求める
+```yaml
+---
+name: code-reviewer
+description: コードレビューとベストプラクティス提案
+---
 ```
+
+これによりツールがエージェント一覧を自動認識。
 
 ### 8.3 個別エージェント定義例
 
@@ -449,11 +443,10 @@ context.md の現在の行数を確認：
 #!/bin/bash
 # scripts/init-context.sh
 
-mkdir -p .ai/agents .ai/commands
+mkdir -p .ai/agents .ai/commands .ai/references
 mkdir -p docs/guidelines docs/architecture docs/decisions
 
 touch .ai/context.md
-touch .ai/agents/_index.md
 
 echo "✅ Context structure initialized!"
 ```
@@ -607,10 +600,14 @@ ai-agent-setting/
 │   ├── .ai/
 │   │   ├── context.md           # 初期テンプレート（穴埋め形式）
 │   │   ├── agents/
-│   │   │   ├── _index.md
-│   │   │   └── context-curator.md
-│   │   └── commands/
-│   │       └── context-update.md
+│   │   │   └── architect.md     # 設計相談エージェント
+│   │   ├── commands/
+│   │   │   ├── context-update.md
+│   │   │   ├── code-review.md
+│   │   │   └── ...
+│   │   └── references/
+│   │       ├── checklists/
+│   │       └── templates/
 │   ├── docs/
 │   │   ├── guidelines/.gitkeep
 │   │   ├── architecture/.gitkeep

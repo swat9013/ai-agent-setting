@@ -4,3 +4,4 @@ template/.cursor
 template/.github
 template/AGENTS.md
 template/CLAUDE.md
+__pycache__
