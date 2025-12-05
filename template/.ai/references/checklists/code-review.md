@@ -76,11 +76,15 @@
 - [ ] 変数名・関数名が明確
 - [ ] マジックナンバーの定数化
 
-### テスタビリティ
-- [ ] 依存注入が可能な設計
-- [ ] モック可能な外部依存
-- [ ] 副作用の分離
-- [ ] テストが追加されている
+### テスト品質（Khorikov 4本柱）
+
+→ 用語定義: `.ai/references/glossaries/testing.md`
+
+- [ ] 観察可能な振る舞いを検証しているか（実装詳細ではなく）
+- [ ] リファクタリング耐性があるか（正当なリファクタリングで壊れないか）
+- [ ] Mockは境界（管理されていない依存）にのみ使用しているか
+- [ ] Stubの呼び出しを検証していないか（verify禁止）
+- [ ] テストがビジネス要件と紐づいているか
 
 ### コード品質
 - [ ] Lint/静的解析の警告なし
@@ -108,10 +112,17 @@
 - [ ] 関連するデータとロジックが同じ場所にまとまっているか（VO、エンティティ、ドメインサービス）
 - [ ] ロジックがサービス層に漏れ出していないか（貧血ドメインモデル）
 
-### ドキュメント
-- [ ] 公開APIにコメント/ドキュメント
-- [ ] 複雑なロジックに説明コメント
-- [ ] READMEの更新（必要な場合）
+### コメント
+
+各対象に書くべきこと:
+- コード → How / テストコード → What / コミットログ → Why / コメント → **Why not**
+
+- [ ] まずコメントより命名で表現できないか検討したか
+- [ ] Why not（なぜ別の方法ではないか）が説明されているか
+- [ ] コードと一致しているか（古いコメントが残っていないか）
+- [ ] 冗長ではないか（自明なことを繰り返していないか）
+- [ ] コメントアウトされたコードがないか（Git管理すべき）
+- [ ] 公開APIにドキュメントコメントがあるか
 
 ### 保守性
 - [ ] YAGNI原則（必要最小限）
@@ -174,52 +185,55 @@ class UserService {
 
 ```typescript
 // ❌ プリミティブ型のまま
-class Order {
-  constructor(
-    public id: string,
-    public amount: number,      // 金額なのに number
-    public currency: string,    // 通貨が別管理
-    public email: string        // バリデーションがバラバラ
-  ) {}
-}
+amount: number; currency: string; email: string;
 
-// ✅ VOとして抽出
-class Money {
-  constructor(
-    public readonly amount: number,
-    public readonly currency: Currency
-  ) {
-    if (amount < 0) throw new Error('Amount must be non-negative');
-  }
-  add(other: Money): Money { /* ... */ }
-}
-
-class Email {
-  constructor(public readonly value: string) {
-    if (!this.isValid(value)) throw new Error('Invalid email');
-  }
-  private isValid(email: string): boolean { /* ... */ }
-}
+// ✅ VOとして抽出（バリデーション・ロジックを内包）
+class Money { constructor(amount: number, currency: Currency) { /* validation */ } }
+class Email { constructor(value: string) { /* validation */ } }
 ```
 
 ### リソース vs イベントの分離
 
 ```typescript
-// ❌ リソースとイベントが混在
-class Order {
-  status: string;           // リソース（現在状態）
-  statusHistory: string[];  // イベント（履歴）← 同じテーブルに混在
-}
+// ❌ 混在: status + statusHistory[] が同じエンティティ
+// ✅ 分離: Order（現在状態）+ OrderStatusChanged（不変の履歴イベント）
+```
 
-// ✅ 分離
-class Order {                          // リソース: 現在状態
-  status: OrderStatus;
-}
-class OrderStatusChanged {             // イベント: 不変の事実
-  readonly orderId: string;
-  readonly from: OrderStatus;
-  readonly to: OrderStatus;
-  readonly changedAt: Date;
-}
+### テスト: Mock/Stubの使い分け
+
+```typescript
+// ❌ Bad: Stubの呼び出しを検証（実装詳細への結合）
+const userRepo = mock<UserRepository>();
+userRepo.findById.mockReturnValue(user);
+await service.getUser(id);
+verify(userRepo.findById).toHaveBeenCalledWith(id); // NG
+
+// ✅ Good: 結果のみを検証
+const userRepo = mock<UserRepository>();
+userRepo.findById.mockReturnValue(user);
+const result = await service.getUser(id);
+expect(result).toEqual(user); // OK
+```
+
+### テスト: 実装詳細 vs 観察可能な振る舞い
+
+```typescript
+// ❌ Bad: 内部メソッド呼び出しを検証（リファクタリングで壊れる）
+const spy = jest.spyOn(service, 'calculateDiscount');
+await service.processOrder(order);
+expect(spy).toHaveBeenCalled();
+
+// ✅ Good: 最終結果を検証（リファクタリング耐性あり）
+const result = await service.processOrder(order);
+expect(result.total).toBe(900); // 割引後価格
+```
+
+### コメント
+
+```typescript
+// ❌ Bad: x = x + 1; // xに1を足す（Howの説明）
+// ❌ Bad: const d = 7; // 保持日数（命名で解決すべき）
+// ✅ Good: const retentionDays = 7;
+// ✅ Good: // ループで実装: 再帰だとスタックオーバーフローの可能性（Why not）
 ```
 

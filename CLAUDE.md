@@ -34,7 +34,7 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 
 | ファイル | 注意点 |
 |---------|--------|
-| template/.ai/context.md | 穴埋め形式を維持。具体的すぎる例は避ける |
+| template/.ai/context.md | プロジェクトのコーディング方針を記載。コンテキスト記述ルール自体は書かない。穴埋め形式を維持 |
 | template/.ai/agents/*.md | 対話向け（設計相談等）のみ。アクション実行はコマンドへ |
 | template/.ai/commands/*.md | ツール非依存を維持。1:1対応ならエージェントと統合。設計パターンは下記参照 |
 | template/.ai/references/ | チェックリスト・テンプレート等の参照用ファイル |
