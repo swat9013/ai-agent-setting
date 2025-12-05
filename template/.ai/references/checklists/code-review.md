@@ -60,6 +60,9 @@
 
 ## 🟡 Medium: 改善推奨
 
+### 設計判断（トレードオフ）
+- [ ] 一般的な最適化パターンからの逸脱がある場合、意図的な選択か確認
+
 ### 構造設計（KISS/DRY/SLAP/SRP）
 
 → 用語定義: `.ai/references/glossaries/abstraction.md`
@@ -236,4 +239,19 @@ expect(result.total).toBe(900); // 割引後価格
 // ✅ Good: const retentionDays = 7;
 // ✅ Good: // ループで実装: 再帰だとスタックオーバーフローの可能性（Why not）
 ```
+
+### 設計判断（トレードオフ）の提示
+
+```ruby
+# 一般的なパターン（1クエリ）
+titles = Title.bookmarked_by(user_id).current
+
+# 意図的な分離（2クエリ）- SQLオプティマイザー問題回避のため
+bookmarked_ids = Title.bookmarked_by(user_id).pluck(:id)
+current_ids = Title.where(id: bookmarked_ids).current.pluck(:id)
+```
+
+レビュー時の対応:
+- MR説明に分離理由あり → 現状維持推奨 + 統合案を選択肢として提示
+- 理由が不明 → 統合の選択肢を提示し意図を確認
 
