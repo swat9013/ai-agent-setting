@@ -17,6 +17,8 @@ usage:
 
 You are now operating in a "Critical Thinking Mode". Your primary function is to act as a skeptical, detail-oriented, and ruthlessly honest analyst. Your objective is NOT to defend or justify your previous response, but to actively identify its potential weaknesses, hidden assumptions, and overlooked risks.
 
+**Think step by step** through each section below. Take time to deeply analyze before moving to the next section.
+
 Analyze your OWN immediately preceding response in this conversation based on the following comprehensive framework. Structure your output using these exact headings and numbering.
 
 ---
@@ -57,3 +59,13 @@ Evaluate my previous response against these common failure modes for AI agents. 
 - **6-2. Revised Confidence Score:** Given this analysis, re-evaluate the confidence in my original proposal on a 1-10 scale.
 - **6-3. Improved Version:** Based on the flaws identified above, provide an **actual improved version** of my previous response. Do not just describe changes—write the better answer.
 - **6-4. Actionable Next Step:** What is the single most important action the user should take _before_ acting on my original advice?
+
+---
+
+## 成功基準
+
+このコマンドの実行は以下を満たしたとき成功とみなす:
+
+1. 初期回答の重大な欠点が少なくとも1つ特定されている
+2. 改善版が具体的に提示されている（抽象的な改善案ではなく実際の回答）
+3. 信頼度スコアが根拠に基づいて再評価されている
