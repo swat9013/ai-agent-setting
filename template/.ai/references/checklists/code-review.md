@@ -66,6 +66,25 @@
 
 ## 🟢 Low: 余力があれば
 
+### モデリング提案（採用は実装者判断）
+
+以下の観点でモデルの分解を提案する。強制ではなく「こう分解できる」という選択肢の提示。
+
+→ 用語定義: `.ai/references/glossaries/modeling.md`
+
+#### リソース vs イベント
+- [ ] 更新されるデータ（リソース）と、過去の事実の記録（イベント）が混在していないか
+- [ ] イベントとして扱うべきもの（注文履歴、操作ログ等）がリソースとして実装されていないか
+- [ ] update/deleteで過去の事実が失われていないか（監査・履歴が必要なデータ）
+
+#### エンティティ vs バリューオブジェクト
+- [ ] IDで識別すべきもの（エンティティ）と、値で識別できるもの（VO）が適切に分離されているか
+- [ ] 金額、メールアドレス、住所等がプリミティブ型のままになっていないか
+
+#### データとロジックの凝集
+- [ ] 関連するデータとロジックが同じ場所にまとまっているか（VO、エンティティ、ドメインサービス）
+- [ ] ロジックがサービス層に漏れ出していないか（貧血ドメインモデル）
+
 ### ドキュメント
 - [ ] 公開APIにコメント/ドキュメント
 - [ ] 複雑なロジックに説明コメント
@@ -125,5 +144,58 @@ class UserService {
 // ✅ Good
 class UserService {
   constructor(private db: Database) {} // 注入
+}
+```
+
+### バリューオブジェクトの抽出
+
+```typescript
+// ❌ プリミティブ型のまま
+class Order {
+  constructor(
+    public id: string,
+    public amount: number,      // 金額なのに number
+    public currency: string,    // 通貨が別管理
+    public email: string        // バリデーションがバラバラ
+  ) {}
+}
+
+// ✅ VOとして抽出
+class Money {
+  constructor(
+    public readonly amount: number,
+    public readonly currency: Currency
+  ) {
+    if (amount < 0) throw new Error('Amount must be non-negative');
+  }
+  add(other: Money): Money { /* ... */ }
+}
+
+class Email {
+  constructor(public readonly value: string) {
+    if (!this.isValid(value)) throw new Error('Invalid email');
+  }
+  private isValid(email: string): boolean { /* ... */ }
+}
+```
+
+### リソース vs イベントの分離
+
+```typescript
+// ❌ リソースとイベントが混在
+class Order {
+  status: string;           // リソース（現在状態）
+  statusHistory: string[];  // イベント（履歴）← 同じテーブルに混在
+}
+
+// ✅ 分離
+class Order {                          // リソース: 現在状態
+  status: OrderStatus;
+}
+class OrderStatusChanged {             // イベント: 不変の事実
+  readonly orderId: string;
+  readonly from: OrderStatus;
+  readonly to: OrderStatus;
+  readonly changedAt: Date;
 }
 ```
