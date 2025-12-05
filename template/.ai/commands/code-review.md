@@ -53,6 +53,7 @@ usage:
 ### 4. レビュー実行
 - `.ai/references/checklists/code-review.md` を読み込む
 - Critical → High → Medium → Low の順でチェック
+- 結合度・コナーセンスの観点でモジュール間依存を評価
 - 重要ドメインは厳格チェック（下記参照）
 
 ### 5. 結果出力
