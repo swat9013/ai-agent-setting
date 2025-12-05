@@ -29,6 +29,7 @@
 - [ ] 不要なデータ取得の回避（SELECT *禁止）
 - [ ] 適切なインデックス
 - [ ] ページネーション（大量データ）
+- [ ] 複雑なクエリ（OR結合、EXISTSサブクエリ等）の実行計画確認
 
 ### アーキテクチャ
 
@@ -141,105 +142,57 @@
 ### N+1クエリ
 
 ```typescript
-// ❌ Bad
-const users = await User.findAll();
-for (const user of users) {
-  const posts = await user.getPosts(); // N回のクエリ
-}
-
-// ✅ Good
-const users = await User.findAll({
-  include: [Post] // 1回のクエリ
-});
+// ❌ ループ内でクエリ
+for (const user of users) { await user.getPosts(); }
+// ✅ Eager Loading
+const users = await User.findAll({ include: [Post] });
 ```
 
 ### エラーハンドリング
 
 ```typescript
-// ❌ Bad
-async function fetchData() {
-  const response = await fetch(url);
-  return response.json();
-}
-
-// ✅ Good
-async function fetchData() {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-  return response.json();
-}
+// ❌ レスポンスチェックなし
+return response.json();
+// ✅ ステータス確認
+if (!response.ok) throw new Error(`HTTP ${response.status}`);
 ```
 
-### 依存注入
+### 依存注入・VO・リソース分離
 
 ```typescript
-// ❌ Bad
-class UserService {
-  private db = new Database(); // 直接生成
-}
+// ❌ 依存を直接生成
+class UserService { private db = new Database(); }
+// ✅ コンストラクタで注入
+class UserService { constructor(private db: Database) {} }
 
-// ✅ Good
-class UserService {
-  constructor(private db: Database) {} // 注入
-}
-```
+// ❌ プリミティブ型のまま: amount: number; email: string;
+// ✅ VOとして抽出: Money, Email（バリデーション内包）
 
-### バリューオブジェクトの抽出
-
-```typescript
-// ❌ プリミティブ型のまま
-amount: number; currency: string; email: string;
-
-// ✅ VOとして抽出（バリデーション・ロジックを内包）
-class Money { constructor(amount: number, currency: Currency) { /* validation */ } }
-class Email { constructor(value: string) { /* validation */ } }
-```
-
-### リソース vs イベントの分離
-
-```typescript
 // ❌ 混在: status + statusHistory[] が同じエンティティ
-// ✅ 分離: Order（現在状態）+ OrderStatusChanged（不変の履歴イベント）
+// ✅ 分離: Order（現在状態）+ OrderStatusChanged（履歴イベント）
 ```
 
-### テスト: Mock/Stubの使い分け
+### テスト: Mock/Stub・実装詳細の検証
 
 ```typescript
-// ❌ Bad: Stubの呼び出しを検証（実装詳細への結合）
-const userRepo = mock<UserRepository>();
-userRepo.findById.mockReturnValue(user);
-await service.getUser(id);
-verify(userRepo.findById).toHaveBeenCalledWith(id); // NG
+// ❌ Stubの呼び出しを検証（実装詳細への結合）
+verify(userRepo.findById).toHaveBeenCalledWith(id);
 
-// ✅ Good: 結果のみを検証
-const userRepo = mock<UserRepository>();
-userRepo.findById.mockReturnValue(user);
-const result = await service.getUser(id);
-expect(result).toEqual(user); // OK
-```
+// ❌ 内部メソッドをspy（リファクタリングで壊れる）
+expect(jest.spyOn(service, 'calculateDiscount')).toHaveBeenCalled();
 
-### テスト: 実装詳細 vs 観察可能な振る舞い
-
-```typescript
-// ❌ Bad: 内部メソッド呼び出しを検証（リファクタリングで壊れる）
-const spy = jest.spyOn(service, 'calculateDiscount');
-await service.processOrder(order);
-expect(spy).toHaveBeenCalled();
-
-// ✅ Good: 最終結果を検証（リファクタリング耐性あり）
-const result = await service.processOrder(order);
-expect(result.total).toBe(900); // 割引後価格
+// ✅ 最終結果のみを検証
+expect(result).toEqual(expectedUser);
+expect(result.total).toBe(900);
 ```
 
 ### コメント
 
 ```typescript
-// ❌ Bad: x = x + 1; // xに1を足す（Howの説明）
-// ❌ Bad: const d = 7; // 保持日数（命名で解決すべき）
-// ✅ Good: const retentionDays = 7;
-// ✅ Good: // ループで実装: 再帰だとスタックオーバーフローの可能性（Why not）
+// ❌ Howの説明: x = x + 1; // xに1を足す
+// ❌ 命名で解決可能: const d = 7; // 保持日数
+// ✅ 命名で表現: const retentionDays = 7;
+// ✅ Why not: // ループで実装（再帰はスタックオーバーフローの恐れ）
 ```
 
 ### 設計判断（トレードオフ）の提示
@@ -256,4 +209,23 @@ current_ids = Title.where(id: bookmarked_ids).current.pluck(:id)
 レビュー時の対応:
 - MR説明に分離理由あり → 現状維持推奨 + 統合案を選択肢として提示
 - 理由が不明 → 統合の選択肢を提示し意図を確認
+
+### 複雑なクエリの実行計画
+
+複雑なクエリ（OR結合、EXISTSサブクエリ等）は、SQLオプティマイザーが期待通りの実行計画を選択しない場合がある。
+
+```ruby
+# 注意: 複雑なクエリは実行計画の確認が必要
+titles = Title.where(...).or(Title.where(...))
+# → 本番相当データでEXPLAIN ANALYZEを確認すること
+```
+
+**確認が必要なケース**:
+- スコープが `or()` を使用している
+- スコープ内に `EXISTS` サブクエリがある
+- 大量データを扱う可能性がある
+
+**対策**:
+- 本番相当データで `EXPLAIN ANALYZE` を確認し、期待通りの実行計画か検証
+- 問題がある場合は、クエリ分離やインデックス追加など個別に対応を検討
 
