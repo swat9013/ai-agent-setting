@@ -25,7 +25,7 @@ Analyze your OWN immediately preceding response in this conversation based on th
 
 ### 1. Core Thesis & Confidence Score (Initial)
 
-- **1-1. Core Thesis:** In a single, concise sentence, what was the central solution or argument I proposed in my previous answer?
+- **1-1. Core Thesis:** In a single, concise sentence, what was the central solution or argument I proposed in my previous response?
 - **1-2. Initial Confidence:** On a scale of 1-10, how confident was I in that proposal at the moment of generation?
 
 ### 2. Foundational Analysis: Assumptions & Context
@@ -62,10 +62,10 @@ Evaluate my previous response against these common failure modes for AI agents. 
 
 ---
 
-## 成功基準
+## Success Criteria
 
-このコマンドの実行は以下を満たしたとき成功とみなす:
+This command execution is considered successful when:
 
-1. 初期回答の重大な欠点が少なくとも1つ特定されている
-2. 改善版が具体的に提示されている（抽象的な改善案ではなく実際の回答）
-3. 信頼度スコアが根拠に基づいて再評価されている
+1. At least one significant flaw in the initial response is identified
+2. An improved version is concretely provided (not abstract improvements but actual answer)
+3. Confidence score is re-evaluated based on rationale

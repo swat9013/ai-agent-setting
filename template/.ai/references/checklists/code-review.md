@@ -1,231 +1,230 @@
-# コードレビューチェックリスト
+# Code Review Checklist
 
-> ⚠️ 各セクションの「→ 用語定義:」リンク先は評価基準として参照すること
+> Warning: Refer to "→ Definition:" links in each section for evaluation criteria
 
-## 🔴 Critical: 即修正必須
+## Critical: Immediate Fix Required
 
-### セキュリティ
-- [ ] SQLインジェクション対策（パラメータバインディング）
-- [ ] XSS対策（サニタイズ、エスケープ）
-- [ ] CSRF対策
-- [ ] 認証・認可の適切な実装
-- [ ] 機密情報のログ出力禁止
-- [ ] ハードコードされた認証情報がないこと
+### Security
+- [ ] SQL injection prevention (parameter binding)
+- [ ] XSS prevention (sanitization, escaping)
+- [ ] CSRF protection
+- [ ] Proper authentication/authorization implementation
+- [ ] No sensitive information in logs
+- [ ] No hardcoded credentials
 
-### データ整合性
-- [ ] 適切な制約（外部キー、NOT NULL、ユニーク）
-- [ ] トランザクション管理（複数更新はアトミック）
-- [ ] マイグレーションの可逆性（rollback可能）
+### Data Integrity
+- [ ] Proper constraints (foreign keys, NOT NULL, unique)
+- [ ] Transaction management (atomic multi-updates)
+- [ ] Migration reversibility (rollback possible)
 
-### 重要ロジック
-- [ ] 冪等性の考慮（必要な場合）
-- [ ] エラーハンドリングの網羅
-- [ ] 境界値・エッジケースの処理
+### Critical Logic
+- [ ] Idempotency considered (when required)
+- [ ] Comprehensive error handling
+- [ ] Boundary/edge case handling
 
-## 🟠 High: 早急に対応
+## High: Address Promptly
 
-### パフォーマンス
-- [ ] N+1クエリの回避
-- [ ] 不要なデータ取得の回避（SELECT *禁止）
-- [ ] 適切なインデックス
-- [ ] ページネーション（大量データ）
-- [ ] 複雑なクエリ（OR結合、EXISTSサブクエリ等）の実行計画確認
+### Performance
+- [ ] N+1 query prevention
+- [ ] Avoid unnecessary data fetching (no SELECT *)
+- [ ] Proper indexing
+- [ ] Pagination (for large data)
+- [ ] Verify execution plan for complex queries (OR joins, EXISTS subqueries)
 
-### アーキテクチャ
+### Architecture
 
-→ 用語定義: `.ai/references/glossaries/architecture.md`
+→ Definition: `.ai/references/glossaries/architecture.md`
 
-- [ ] レイヤー分離の遵守
-- [ ] 依存の方向が正しい（上位→下位のみ）
-- [ ] 循環依存がない
+- [ ] Layer separation compliance
+- [ ] Correct dependency direction (upper → lower only)
+- [ ] No circular dependencies
 
-### 結合度・コナーセンス
+### Coupling and Connascence
 
-→ 用語定義: `.ai/references/glossaries/coupling.md`、`.ai/references/glossaries/architecture.md`（境界の種類）
+→ Definition: `.ai/references/glossaries/coupling.md`, `.ai/references/glossaries/architecture.md` (boundary types)
 
-- [ ] 強い結合（内容結合・共通結合）がないか
-- [ ] 動的コナーセンス（実行順序・タイミング・値・同一性）が最小限か
-- [ ] 境界を越える結合は弱い形式（データ結合・名前のコナーセンス）か
+- [ ] No strong coupling (content/common coupling)
+- [ ] Dynamic connascence (execution order, timing, value, identity) minimized
+- [ ] Cross-boundary coupling uses weak forms (data coupling, connascence of name)
 
-### エラーハンドリング
-- [ ] 例外の適切な捕捉と処理
-- [ ] エラーメッセージが有用
-- [ ] リトライロジック（外部連携）
+### Error Handling
+- [ ] Proper exception catching and handling
+- [ ] Useful error messages
+- [ ] Retry logic (for external integrations)
 
-### 契約による設計と信頼境界線
+### Design by Contract and Trust Boundaries
 
-→ 用語定義: `.ai/references/glossaries/architecture.md`（契約による設計、境界の種類）
+→ Definition: `.ai/references/glossaries/architecture.md` (design by contract, boundary types)
 
-- [ ] 信頼境界線が明確に定義されている（外部入力、API境界、モジュール境界）
-- [ ] 境界上でのみバリデーション・サニタイズを実施（内部では信頼）
-- [ ] 事前条件・事後条件・不変条件が適切に定義されている
-- [ ] 防御的コードが境界に集中し、内部ロジックは簡潔か
+- [ ] Trust boundaries clearly defined (external input, API boundaries, module boundaries)
+- [ ] Validation/sanitization only at boundaries (trust internally)
+- [ ] Preconditions, postconditions, invariants properly defined
+- [ ] Defensive code concentrated at boundaries; internal logic kept simple
 
-## 🟡 Medium: 改善推奨
+## Medium: Improvement Recommended
 
-### 設計判断（トレードオフ）
-- [ ] 一般的な最適化パターンからの逸脱がある場合、意図的な選択か確認
+### Design Decisions (Trade-offs)
+- [ ] If deviating from common optimization patterns, verify it's intentional
 
-### 構造設計（KISS/DRY/SLAP/SRP）
+### Structural Design (KISS/DRY/SLAP/SRP)
 
-→ 用語定義: `.ai/references/glossaries/abstraction.md`
+→ Definition: `.ai/references/glossaries/abstraction.md`
 
-- [ ] 最もシンプルな解決策になっている
-- [ ] 同じ責務を持つコードが一箇所にまとまっている
-- [ ] 1関数内が同じ抽象レベルで記述されている
-- [ ] 1クラス/モジュールが1つの責任のみ持つ
+- [ ] Simplest solution chosen
+- [ ] Code with same responsibility consolidated in one place
+- [ ] Same abstraction level within each function
+- [ ] Each class/module has single responsibility
 
-### 可読性
-- [ ] メソッド長が適切（目安: 20行以下）
-- [ ] クラス長が適切（目安: 300行以下）
-- [ ] ネストが深すぎない（目安: 3レベル以下）
-- [ ] 変数名・関数名が明確
-- [ ] マジックナンバーの定数化
+### Readability
+- [ ] Appropriate method length (guideline: 20 lines or less)
+- [ ] Appropriate class length (guideline: 300 lines or less)
+- [ ] Nesting not too deep (guideline: 3 levels or less)
+- [ ] Clear variable/function names
+- [ ] Magic numbers extracted to constants
 
-### テスト品質（Khorikov 4本柱）
+### Test Quality (Khorikov 4 Pillars)
 
-→ 用語定義: `.ai/references/glossaries/testing.md`
+→ Definition: `.ai/references/glossaries/testing.md`
 
-- [ ] 観察可能な振る舞いを検証しているか（実装詳細ではなく）
-- [ ] リファクタリング耐性があるか（正当なリファクタリングで壊れないか）
-- [ ] Mockは境界（管理されていない依存）にのみ使用しているか
-- [ ] Stubの呼び出しを検証していないか（verify禁止）
-- [ ] テストがビジネス要件と紐づいているか
+- [ ] Verifying observable behavior (not implementation details)
+- [ ] Resistant to refactoring (won't break on legitimate refactoring)
+- [ ] Mocks used only at boundaries (unmanaged dependencies)
+- [ ] Not verifying stub calls (no verify on stubs)
+- [ ] Tests tied to business requirements
 
-### コード品質
-- [ ] Lint/静的解析の警告なし
-- [ ] 未使用のコード・インポートなし
-- [ ] TODO/FIXMEにチケット番号あり
+### Code Quality
+- [ ] No lint/static analysis warnings
+- [ ] No unused code/imports
+- [ ] TODOs/FIXMEs have ticket numbers
 
-## 🟢 Low: 余力があれば
+## Low: If Time Permits
 
-### モデリング提案（採用は実装者判断）
+### Modeling Suggestions (Adoption at Implementer's Discretion)
 
-以下の観点でモデルの分解を提案する。強制ではなく「こう分解できる」という選択肢の提示。
+Suggest model decomposition from these perspectives. Not mandatory—just presenting alternatives.
 
-→ 用語定義: `.ai/references/glossaries/modeling.md`
+→ Definition: `.ai/references/glossaries/modeling.md`
 
-#### リソース vs イベント
-- [ ] 更新されるデータ（リソース）と、過去の事実の記録（イベント）が混在していないか
-- [ ] イベントとして扱うべきもの（注文履歴、操作ログ等）がリソースとして実装されていないか
-- [ ] update/deleteで過去の事実が失われていないか（監査・履歴が必要なデータ）
+#### Resource vs Event
+- [ ] Current state data (resources) and historical records (events) are properly separated
+- [ ] Data that should be events (order history, operation logs) is not incorrectly implemented as resources
+- [ ] Updates/deletes preserve historical facts when audit trails or history are required
 
-#### エンティティ vs バリューオブジェクト
-- [ ] IDで識別すべきもの（エンティティ）と、値で識別できるもの（VO）が適切に分離されているか
-- [ ] 金額、メールアドレス、住所等がプリミティブ型のままになっていないか
+#### Entity vs Value Object
+- [ ] Proper separation of ID-identified (entity) and value-identified (VO) objects
+- [ ] Amounts, email addresses, and addresses are not left as primitive types
 
-#### データとロジックの凝集
-- [ ] 関連するデータとロジックが同じ場所にまとまっているか（VO、エンティティ、ドメインサービス）
-- [ ] ロジックがサービス層に漏れ出していないか（貧血ドメインモデル）
+#### Data and Logic Cohesion
+- [ ] Related data and logic consolidated (VO, entity, domain service)
+- [ ] Logic doesn't leak to service layer (avoiding anemic domain model)
 
-### コメント
+### Comments
 
-各対象に書くべきこと:
-- コード → How / テストコード → What / コミットログ → Why / コメント → **Why not**
+What to write for each target:
+- Code → How / Test code → What / Commit log → Why / Comments → **Why not**
 
-- [ ] まずコメントより命名で表現できないか検討したか
-- [ ] Why not（なぜ別の方法ではないか）が説明されているか
-- [ ] コードと一致しているか（古いコメントが残っていないか）
-- [ ] 冗長ではないか（自明なことを繰り返していないか）
-- [ ] コメントアウトされたコードがないか（Git管理すべき）
-- [ ] 公開APIにドキュメントコメントがあるか
+- [ ] Consider whether better naming could replace the comment
+- [ ] "Why not" (why another approach wasn't chosen) is explained
+- [ ] Comments match the code (no stale comments)
+- [ ] Comments are not redundant (not repeating the obvious)
+- [ ] No commented-out code (should be in Git)
+- [ ] Public APIs have doc comments
 
-### 保守性
-- [ ] YAGNI原則（必要最小限）
-- [ ] 一貫した命名規則
-- [ ] 適切なファイル配置
+### Maintainability
+- [ ] YAGNI principle (minimum necessary)
+- [ ] Consistent naming conventions
+- [ ] Appropriate file placement
 
 ---
 
-## よくあるパターンと修正例
+## Common Patterns and Fixes
 
-### N+1クエリ
+### N+1 Query
 
 ```typescript
-// ❌ ループ内でクエリ
+// ❌ Query inside loop
 for (const user of users) { await user.getPosts(); }
 // ✅ Eager Loading
 const users = await User.findAll({ include: [Post] });
 ```
 
-### エラーハンドリング
+### Error Handling
 
 ```typescript
-// ❌ レスポンスチェックなし
+// ❌ No response check
 return response.json();
-// ✅ ステータス確認
+// ✅ Status verification
 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 ```
 
-### 依存注入・VO・リソース分離
+### Dependency Injection, VO, Resource Separation
 
 ```typescript
-// ❌ 依存を直接生成
+// ❌ Direct dependency creation
 class UserService { private db = new Database(); }
-// ✅ コンストラクタで注入
+// ✅ Constructor injection
 class UserService { constructor(private db: Database) {} }
 
-// ❌ プリミティブ型のまま: amount: number; email: string;
-// ✅ VOとして抽出: Money, Email（バリデーション内包）
+// ❌ Primitive types: amount: number; email: string;
+// ✅ Extracted as VO: Money, Email (with built-in validation)
 
-// ❌ 混在: status + statusHistory[] が同じエンティティ
-// ✅ 分離: Order（現在状態）+ OrderStatusChanged（履歴イベント）
+// ❌ Mixed: status + statusHistory[] in same entity
+// ✅ Separated: Order (current state) + OrderStatusChanged (history event)
 ```
 
-### テスト: Mock/Stub・実装詳細の検証
+### Tests: Mock/Stub and Implementation Detail Verification
 
 ```typescript
-// ❌ Stubの呼び出しを検証（実装詳細への結合）
+// ❌ Verifying stub calls (coupling to implementation details)
 verify(userRepo.findById).toHaveBeenCalledWith(id);
 
-// ❌ 内部メソッドをspy（リファクタリングで壊れる）
+// ❌ Spying on internal methods (breaks on refactoring)
 expect(jest.spyOn(service, 'calculateDiscount')).toHaveBeenCalled();
 
-// ✅ 最終結果のみを検証
+// ✅ Verify only final results
 expect(result).toEqual(expectedUser);
 expect(result.total).toBe(900);
 ```
 
-### コメント
+### Comments
 
 ```typescript
-// ❌ Howの説明: x = x + 1; // xに1を足す
-// ❌ 命名で解決可能: const d = 7; // 保持日数
-// ✅ 命名で表現: const retentionDays = 7;
-// ✅ Why not: // ループで実装（再帰はスタックオーバーフローの恐れ）
+// ❌ Explaining How: x = x + 1; // add 1 to x
+// ❌ Solvable by naming: const d = 7; // retention days
+// ✅ Express in naming: const retentionDays = 7;
+// ✅ Why not: // Using loop (recursion risks stack overflow)
 ```
 
-### 設計判断（トレードオフ）の提示
+### Design Decisions (Trade-off) Presentation
 
 ```ruby
-# 一般的なパターン（1クエリ）
+# Common pattern (1 query)
 titles = Title.bookmarked_by(user_id).current
 
-# 意図的な分離（2クエリ）- SQLオプティマイザー問題回避のため
+# Intentional separation (2 queries) - to avoid SQL optimizer issues
 bookmarked_ids = Title.bookmarked_by(user_id).pluck(:id)
 current_ids = Title.where(id: bookmarked_ids).current.pluck(:id)
 ```
 
-レビュー時の対応:
-- MR説明に分離理由あり → 現状維持推奨 + 統合案を選択肢として提示
-- 理由が不明 → 統合の選択肢を提示し意図を確認
+Review handling:
+- MR description explains separation → Recommend current approach + present merge option
+- Reason unclear → Present merge option and confirm intent
 
-### 複雑なクエリの実行計画
+### Complex Query Execution Plans
 
-複雑なクエリ（OR結合、EXISTSサブクエリ等）は、SQLオプティマイザーが期待通りの実行計画を選択しない場合がある。
+Complex queries (OR joins, EXISTS subqueries) may not get expected execution plans from SQL optimizer.
 
 ```ruby
-# 注意: 複雑なクエリは実行計画の確認が必要
+# Note: Complex queries require execution plan verification
 titles = Title.where(...).or(Title.where(...))
-# → 本番相当データでEXPLAIN ANALYZEを確認すること
+# → Verify with EXPLAIN ANALYZE on production-like data
 ```
 
-**確認が必要なケース**:
-- スコープが `or()` を使用している
-- スコープ内に `EXISTS` サブクエリがある
-- 大量データを扱う可能性がある
+**Cases requiring verification**:
+- Scope uses `or()`
+- Scope contains `EXISTS` subquery
+- May handle large data volumes
 
-**対策**:
-- 本番相当データで `EXPLAIN ANALYZE` を確認し、期待通りの実行計画か検証
-- 問題がある場合は、クエリ分離やインデックス追加など個別に対応を検討
-
+**Countermeasures**:
+- Verify expected execution plan with `EXPLAIN ANALYZE` on production-like data
+- If issues found, consider query separation or index additions

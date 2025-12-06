@@ -1,67 +1,67 @@
-# 結合度・コナーセンス リファレンス
+# Coupling and Connascence Reference
 
-## 結合度（Coupling）- 弱い順
+## Coupling Types (from weakest to strongest)
 
-| 種類 | 説明 | 問題度 |
-|------|------|--------|
-| **データ結合** | プリミティブなデータのみを渡す | ✅ 最良 |
-| **スタンプ結合** | 複合データ構造を渡すが一部のみ使用 | ⚠️ 軽度 |
-| **制御結合** | 制御フラグを渡して振る舞いを変える | ⚠️ 中度 |
-| **共通結合** | グローバル変数・状態を共有 | ❌ 高度 |
-| **内容結合** | 他モジュールの内部を直接参照・変更 | ❌ 最悪 |
+| Type | Description | Severity |
+|------|-------------|----------|
+| **Data coupling** | Pass only primitive data | ✅ Best |
+| **Stamp coupling** | Pass composite data structure, use only part | ⚠️ Mild |
+| **Control coupling** | Pass control flags to change behavior | ⚠️ Medium |
+| **Common coupling** | Share global variables/state | ❌ High |
+| **Content coupling** | Directly reference/modify another module's internals | ❌ Worst |
 
-**方向性指標**:
-- **求心性結合（Afferent）**: このモジュールに依存する数 → 高いと影響範囲大
-- **遠心性結合（Efferent）**: このモジュールが依存する数 → 高いと責務過多
+**Directional Metrics**:
+- **Afferent coupling**: Number depending on this module → High means wide impact
+- **Efferent coupling**: Number this module depends on → High means too many responsibilities
 
-## コナーセンス（Connascence）
+## Connascence
 
-「一方を変更したとき、他方も変更が必要」になる依存関係の分類。
+Dependencies where "changing one requires changing the other."
 
-### 静的コナーセンス（弱い順）
+### Static Connascence (from weakest to strongest)
 
-| 種類 | 説明 | 例 | 改善策 |
-|------|------|-----|--------|
-| **名前（CoN）** | 同じ名前を参照 | 関数名、変数名 | 意図を明確にした命名 |
-| **型（CoT）** | 同じ型を期待 | 引数の型、戻り値の型 | 型定義の共有 |
-| **意味（CoM）** | 特定の値に意味を付与 | `status == 1` でアクティブ | 列挙型・定数に抽出 |
-| **位置（CoP）** | 順序に依存 | 位置引数、配列のインデックス | 名前付き引数、辞書/オブジェクト |
-| **アルゴリズム（CoA）** | 同じアルゴリズムを使用 | ハッシュ、暗号化、バリデーション | 単一の共有実装に集約 |
+| Type | Description | Example | Improvement |
+|------|-------------|---------|-------------|
+| **Name (CoN)** | Reference same name | Function names, variable names | Clear intentional naming |
+| **Type (CoT)** | Expect same type | Argument types, return types | Shared type definitions |
+| **Meaning (CoM)** | Assign meaning to specific values | `status == 1` means active | Extract to enums/constants |
+| **Position (CoP)** | Depend on order | Positional args, array indices | Named args, dictionaries/objects |
+| **Algorithm (CoA)** | Use same algorithm | Hash, encryption, validation | Single shared implementation |
 
-### 動的コナーセンス（より強い）
+### Dynamic Connascence (stronger)
 
-| 種類 | 説明 | 例 | 改善策 |
-|------|------|-----|--------|
-| **実行順序（CoE）** | 呼び出し順序に依存 | init()→process()→cleanup() | 状態機械、ビルダーパターン |
-| **タイミング（CoTm）** | 実行タイミングに依存 | 競合状態、タイムアウト | 同期機構、イベント駆動 |
-| **値（CoV）** | 複数の値が一緒に変わる | テストと実装の同じ値 | 間接参照（定数、設定） |
-| **同一性（CoI）** | 同じインスタンスを参照 | 共有オブジェクト | 明示的な依存注入 |
+| Type | Description | Example | Improvement |
+|------|-------------|---------|-------------|
+| **Execution (CoE)** | Depend on call order | init()→process()→cleanup() | State machine, builder pattern |
+| **Timing (CoTm)** | Depend on execution timing | Race conditions, timeouts | Synchronization, event-driven |
+| **Value (CoV)** | Multiple values change together | Same values in test and impl | Indirect reference (constants, config) |
+| **Identity (CoI)** | Reference same instance | Shared objects | Explicit dependency injection |
 
-### 評価の3軸
+### 3-Axis Evaluation
 
-1. **強度（Strength）**: 強いほどリファクタリング困難
-2. **局所性（Locality）**: 遠いほど問題（同一ファイル内なら許容）
-3. **程度（Degree）**: 影響範囲が広いほど問題
+1. **Strength**: Stronger = harder to refactor
+2. **Locality**: More distant = more problematic (within the same file is acceptable)
+3. **Degree**: Wider impact = more problematic
 
-## コード例
+## Code Examples
 
 ```typescript
-// ❌ 位置のコナーセンス（CoP）
+// ❌ Connascence of Position (CoP)
 function createUser(name: string, email: string, age: number, isAdmin: boolean) {}
-createUser("John", "john@example.com", 30, true); // 順序を覚える必要
+createUser("John", "john@example.com", 30, true); // Must remember order
 
-// ✅ 名前のコナーセンス（CoN）に改善
+// ✅ Improved to Connascence of Name (CoN)
 function createUser(params: { name: string; email: string; age: number; isAdmin: boolean }) {}
 createUser({ name: "John", email: "john@example.com", age: 30, isAdmin: true });
 ```
 
 ```typescript
-// ❌ 共通結合（グローバル状態）
+// ❌ Common coupling (global state)
 let currentUser: User | null = null;
 function processOrder() {
-  if (currentUser) { /* ... */ } // グローバル変数に依存
+  if (currentUser) { /* ... */ } // Depends on global variable
 }
 
-// ✅ データ結合（明示的な引数）
+// ✅ Data coupling (explicit argument)
 function processOrder(user: User) { /* ... */ }
 ```

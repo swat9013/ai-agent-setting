@@ -1,102 +1,102 @@
 ---
 type: command
 name: review-update
-description: コードレビューの学びをチェックリスト・コマンドに反映
+description: Reflect code review learnings to checklist and command
 usage:
   - /review-update
 ---
 
 # Review Update Command
 
-コードレビューセッションを振り返り、チェックリスト・コマンドを改善する。
+Reflect on code review session and improve checklist and command.
 
-## 対象ファイル
+## Target Files
 
-- `.ai/references/checklists/code-review.md` - チェック項目
-- `.ai/commands/code-review.md` - レビューフロー
+- `.ai/references/checklists/code-review.md` - Check items
+- `.ai/commands/code-review.md` - Review flow
 
-## 前提条件
+## Prerequisites
 
-以下を確認してから実行。満たさない場合は中止し理由を報告:
+Verify the following before execution. Abort and report reason if not met:
 
-1. コードレビューセッションが直前に実施された
-2. `.ai/references/checklists/code-review.md` が存在する
-3. 保存すべき学びがセッション内に存在する
+1. Code review session was just conducted
+2. `.ai/references/checklists/code-review.md` exists
+3. Session contains learnings worth saving
 
-## 実行手順
+## Execution Steps
 
-### 1. 抽出
-セッションから保存すべき内容を特定：
-- 新しいチェック観点（セキュリティ、パフォーマンス等）
-- 有効だったパターン・アンチパターンの例
-- 繰り返し指摘した問題
-- レビューフローの改善点
+### 1. Extract
+Identify content to save from session:
+- New review perspectives (security, performance, etc.)
+- Effective patterns and anti-patterns with examples
+- Repeatedly raised problems
+- Review flow improvements
 
-### 2. 整合性チェック
-- 既存項目との矛盾・重複がないか確認
-- 優先度（Critical/High/Medium/Low）の妥当性確認
+### 2. Consistency Check
+- Verify no contradictions/duplicates with existing items
+- Verify priority (Critical/High/Medium/Low) appropriateness
 
-### 3. 規模チェック
+### 3. Size Check
 ```bash
 python3 .ai/scripts/measure-context.py --references
 ```
-閾値超過時は追記前に圧縮。
+Compress before adding if threshold exceeded.
 
-### 4. 保存先判断
+### 4. Determine Save Location
 
-| 種類 | 保存先 |
-|-----|-------|
-| チェック項目・パターン例 | .ai/references/checklists/code-review.md |
-| レビューフロー・出力形式 | .ai/commands/code-review.md |
+| Type | Location |
+|------|----------|
+| Check items, pattern examples | .ai/references/checklists/code-review.md |
+| Review flow, output format | .ai/commands/code-review.md |
 
-### 5. 同期
+### 5. Sync
 ```bash
 python3 .ai/scripts/sync-context.py
 ```
 
-## 圧縮方針
-1. 重複統合（類似チェック項目をまとめる）
-2. 表現簡潔化
-3. 頻出項目は優先度を上げる
-4. 有効でないパターン例は削除
+## Compression Strategy
+1. Merge duplicates (combine similar check items)
+2. Simplify expressions
+3. Raise priority for frequently occurring items
+4. Remove ineffective pattern examples
 
-## 出力形式
+## Output Format
 ```
-### 変更サマリー
-- チェックリスト: 追加X件、修正X件、削除X件
-- コマンド: 追加/修正/変更なし
-- 圧縮: 実施/不要
+### Change Summary
+- Checklist: Added X, Modified X, Deleted X
+- Command: Added/Modified/No change
+- Compression: Done/Not needed
 
-### 更新内容
-[差分または追加項目]
+### Updates
+[Diff or added items]
 ```
 
-## 成功基準
+## Success Criteria
 
-このコマンドの実行は以下を満たしたとき成功とみなす:
+This command execution is considered successful when:
 
-1. レビューで得た学びが次回以降のレビューで活用できる形で保存されている
-2. 追加項目が具体的で検証可能（Good/Bad例を含む）
-3. チェックリストが閾値内に収まっている
+1. Review learnings saved in form usable for future reviews
+2. Added items are specific and verifiable (include Good/Bad examples)
+3. Checklist remains within threshold
 
-## 完了チェックリスト
+## Completion Checklist
 
-結果報告前に以下をすべて確認。未達成項目があれば修正してから報告:
+Verify all items before reporting. Fix incomplete items before reporting:
 
-- [ ] 前提条件をすべて満たした
-- [ ] 追加項目が具体的で検証可能
-- [ ] 既存項目との矛盾・重複がない
-- [ ] 優先度が適切に設定されている
-- [ ] 規模チェックを実行し閾値内
-- [ ] 出力形式に従っている
+- [ ] All prerequisites met
+- [ ] Added items are specific and verifiable
+- [ ] No contradictions/duplicates with existing items
+- [ ] Priority properly assigned
+- [ ] Ran size check, within threshold
+- [ ] Followed output format
 
-## 原則
+## Principles
 
-- 具体的な修正例（Good/Bad）を重視
-- 実践に必要な知識のみ記載（歴史的経緯や比較用の対立概念は不要）
-- プロジェクト固有すぎる項目は context.md へ
-- 汎用的なベストプラクティスをチェックリストへ
+- Prioritize concrete fix examples (Good/Bad)
+- Only practical knowledge needed (no historical context or opposing concepts for comparison)
+- Project-specific items go to context.md
+- Generic best practices go to checklist
 
-## 関連
+## Related
 
-- `/code-review` - コードレビュー実行
+- `/code-review` - Execute code review

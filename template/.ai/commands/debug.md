@@ -1,99 +1,99 @@
 ---
 type: command
 name: debug
-description: バグ調査を支援し、根本原因の特定と修正案を提示する
+description: Support bug investigation and identify root causes with fix proposals
 usage:
   - /debug TypeError: Cannot read property 'x' of undefined
-  - /debug ログイン後にセッションが切れる問題
+  - /debug Session expires after login
   - /debug logs/error.log
 ---
 # Debug Command
 
-バグ調査を支援し、根本原因の特定と修正案を提示する。
+Support bug investigation and identify root causes with fix proposals.
 
-## 使用方法
+## Usage
 
 ```bash
 /debug TypeError: Cannot read property 'x' of undefined
-/debug ログイン後にセッションが切れる問題
+/debug Session expires after login
 /debug logs/error.log
 ```
 
-## 前提条件
+## Prerequisites
 
-以下を確認してから実行。満たさない場合は中止し理由を報告:
+Verify the following before execution. Abort and report reason if not met:
 
-1. エラーメッセージ、症状、またはログファイルが提供されている
-2. 関連するソースコードにアクセス可能
+1. Error message, symptom, or log file is provided
+2. Related source code is accessible
 
-## 実行手順
+## Execution Steps
 
-### 1. 状況把握
-- エラーメッセージ/スタックトレース分析
-- 再現手順、発生頻度、影響範囲を確認
-- 不明点があれば `[NEEDS CLARIFICATION: 質問]` を挿入（最大3箇所）
+### 1. Understand Situation
+- Analyze error message/stack trace
+- Confirm reproduction steps, frequency, impact scope
+- Insert `[NEEDS CLARIFICATION: question]` for unclear points (max 3)
 
-### 2. 原因特定
-- エラー発生箇所と関連コード調査
-- 仮説立案（直接原因 → 根本原因）
-- ログ/デバッガで検証
+### 2. Identify Cause
+- Investigate error location and related code
+- Form hypothesis (direct cause → root cause)
+- Verify with logs/debugger
 
-### 3. 対応判定
+### 3. Determine Response
 
-| 種別 | 対応 |
-|------|------|
-| 単純バグ（タイポ、null未チェック等） | 即修正 + テスト追加 |
-| 技術的負債（設計欠陥） | パッチ + docs/に記録 |
+| Type | Response |
+|------|----------|
+| Simple bug (typo, null check missing, etc.) | Fix immediately + add tests |
+| Technical debt (design flaw) | Patch + record in docs/ |
 
-### 4. 結果出力
-- 下記の出力形式に従って報告
+### 4. Output Results
+- Report following the output format below
 
-## 出力形式
+## Output Format
 
 ```markdown
-# デバッグレポート
+# Debug Report
 
-## 問題: [症状]
-## 原因: 直接=[X]、根本=[Y]
-## 判定: [単純バグ/技術的負債]
+## Problem: [Symptom]
+## Cause: Direct=[X], Root=[Y]
+## Classification: [Simple bug/Technical debt]
 
-## 修正案
-[具体的な修正内容]
+## Fix Proposal
+[Specific fix content]
 
-## テスト追加
-[追加すべきテストケース]
+## Tests to Add
+[Test cases to add]
 
-## 次のアクション
-1. [ステップ]
+## Next Actions
+1. [Step]
 ```
 
-## 成功基準
+## Success Criteria
 
-このコマンドの実行は以下を満たしたとき成功とみなす:
+This command execution is considered successful when:
 
-1. 直接原因と根本原因が明確に区別して特定されている
-2. 修正案が具体的（ファイル名、行番号、コード例を含む）
-3. 再発防止のためのテスト追加案が提示されている
+1. Direct cause and root cause clearly distinguished and identified
+2. Fix proposal is specific (includes file name, line number, code example)
+3. Test addition proposal for preventing recurrence is provided
 
-## よくあるパターン
+## Common Patterns
 
-| エラー         | 原因               | 確認         |
-| -------------- | ------------------ | ------------ |
-| null/undefined | 初期化漏れ、非同期 | データフロー |
-| 型エラー       | 型変換、API応答    | 入出力の型   |
-| N+1            | eager loading不足  | クエリログ   |
+| Error | Cause | Check |
+|-------|-------|-------|
+| null/undefined | Missing initialization, async | Data flow |
+| Type error | Type conversion, API response | Input/output types |
+| N+1 | Missing eager loading | Query log |
 
-## 完了チェックリスト
+## Completion Checklist
 
-結果報告前に以下をすべて確認。未達成項目があれば修正してから報告:
+Verify all items before reporting. Fix incomplete items before reporting:
 
-- [ ] 前提条件をすべて満たした
-- [ ] 直接原因と根本原因を明確に区別した
-- [ ] 修正案が具体的（ファイル名、行番号、コード例）
-- [ ] テスト追加案を含めた
-- [ ] 出力形式に従っている
-- [ ] `[NEEDS CLARIFICATION]` が残っている場合はユーザーに確認を求めた
+- [ ] All prerequisites met
+- [ ] Direct cause and root cause clearly distinguished
+- [ ] Fix proposal is specific (file name, line number, code example)
+- [ ] Test addition proposal included
+- [ ] Followed output format
+- [ ] Asked user for clarification if `[NEEDS CLARIFICATION]` remains
 
-## 原則
+## Principles
 
-5 Whys、仮説駆動、最小再現
+5 Whys, hypothesis-driven, minimal reproduction

@@ -1,57 +1,57 @@
-# テスト用語集（Khorikov基準）
+# Testing Glossary (Khorikov Standards)
 
-## 良いテストの4本柱
+## Four Pillars of Good Tests
 
-| 柱 | 説明 |
-|---|---|
-| 退行に対する保護 | バグを検出する能力。テストが実行するコード量に比例 |
-| リファクタリング耐性 | 実装変更時に偽陽性を出さない。**最重要** |
-| 迅速なフィードバック | テスト実行が速い |
-| 保守性 | テストの理解・変更が容易 |
+| Pillar | Description |
+|--------|-------------|
+| Protection against regressions | Ability to detect bugs. Proportional to code executed |
+| Resistance to refactoring | No false positives on implementation changes. **Most important** |
+| Fast feedback | Tests execute quickly |
+| Maintainability | Tests are easy to understand and modify |
 
-## 観察可能な振る舞い vs 実装詳細
+## Observable Behavior vs Implementation Details
 
-| 種類 | 説明 | 検証すべきか |
-|-----|------|------------|
-| 観察可能な振る舞い | 公開API、最終出力、外部から見える副作用 | ✅ |
-| 実装詳細 | privateメソッド、内部状態、呼び出し順序 | ❌ |
+| Type | Description | Should Verify? |
+|------|-------------|----------------|
+| Observable behavior | Public API, final output, externally visible side effects | ✅ |
+| Implementation details | Private methods, internal state, call order | ❌ |
 
-**判定基準**: クライアントの目標達成に直接貢献するか？
+**Criteria**: Does it directly contribute to achieving the client's goal?
 
-## テストダブル
+## Test Doubles
 
-| 種類 | 役割 | 検証してよいか |
-|-----|------|--------------|
-| Mock | 外向きの相互作用を模倣（副作用を起こす呼び出し） | ✅ |
-| Stub | 内向きの相互作用を模倣（データ取得） | ❌ |
-| Spy | 手書きのMock | ✅ |
-| Dummy | シグネチャを満たすだけの値 | - |
-| Fake | 簡易実装（インメモリDB等） | - |
+| Type | Role | OK to Verify? |
+|------|------|---------------|
+| Mock | Emulate outgoing interactions (calls with side effects) | ✅ |
+| Stub | Emulate incoming interactions (data retrieval) | ❌ |
+| Spy | Hand-written Mock | ✅ |
+| Dummy | Values just to satisfy signatures | - |
+| Fake | Simplified implementation (in-memory DB, etc.) | - |
 
-**CQS原則との対応**:
-- Command（副作用あり、void戻り） → Mock
-- Query（副作用なし、値を返す） → Stub
+**CQS Principle correspondence**:
+- Command (has side effects, void return) → Mock
+- Query (no side effects, returns value) → Stub
 
-## 依存の種類
+## Dependency Types
 
-| 種類 | 例 | テストでの扱い |
-|-----|-----|--------------|
-| 管理された依存 | アプリケーションDB | 実インスタンス使用 |
-| 管理されていない依存 | SMTP、外部API、メッセージバス | Mock使用 |
+| Type | Examples | Test Handling |
+|------|----------|---------------|
+| Managed dependencies | Application DB | Use real instance |
+| Unmanaged dependencies | SMTP, external APIs, message bus | Use Mock |
 
-**境界の原則**: 内部クラス間の通信はMock検証しない
+**Boundary principle**: Do not use mocks to verify communication between internal classes
 
-## テストスタイル（優先順）
+## Test Styles (Priority Order)
 
-1. **出力ベース**: 純粋関数の戻り値を検証 ← 最も脆くない
-2. **状態ベース**: 操作後の状態を検証
-3. **コミュニケーションベース**: 相互作用を検証 ← 最も脆い
+1. **Output-based**: Verify pure function return values ← Least brittle
+2. **State-based**: Verify state after operation
+3. **Communication-based**: Verify interactions ← Most brittle
 
-## アンチパターン
+## Anti-patterns
 
-| パターン | 問題 |
-|---------|------|
-| 構造検査 | 内部構造の存在確認。リファクタリングで壊れる |
-| Stub検証 | `verify(stub)` は実装詳細への結合 |
-| 過剰なMock | 内部コラボレータをすべてMock |
-| カバレッジ目標 | 高カバレッジは品質を保証しない |
+| Pattern | Problem |
+|---------|---------|
+| Structural inspection | Checking internal structure existence. Breaks on refactoring |
+| Stub verification | `verify(stub)` couples to implementation details |
+| Excessive mocking | Mock all internal collaborators |
+| Coverage goals | High coverage doesn't guarantee quality |

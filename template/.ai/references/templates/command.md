@@ -1,136 +1,136 @@
-# コマンド作成テンプレート
+# Command Creation Template
 
-新しいコマンドを作成する際のテンプレート。
+Template for creating new commands.
 
-## 構造
+## Structure
 
 ```markdown
 ---
 type: command
 name: command-name
-description: コマンドの目的を1行で
+description: Purpose of the command in one line
 usage:
   - /command-name arg1
   - /command-name arg2
 ---
 # Command Name
 
-コマンドの目的を簡潔に説明。
+Brief explanation of command purpose.
 
-## 使用方法
+## Usage
 
 \`\`\`bash
-/command-name arg1   # 説明
-/command-name arg2   # 説明
+/command-name arg1   # description
+/command-name arg2   # description
 \`\`\`
 
-## 前提条件
+## Prerequisites
 
-以下を確認してから実行。満たさない場合は中止し理由を報告:
+Verify the following before execution. Abort and report reason if not met:
 
-1. [必須の前提条件1]
-2. [必須の前提条件2]
+1. [Required prerequisite 1]
+2. [Required prerequisite 2]
 
-## 実行手順
+## Execution Steps
 
-### 1. [ステップ名]
-- 具体的なアクション
-- 不明点があれば `[NEEDS CLARIFICATION: 質問]` を挿入（最大3箇所）
+### 1. [Step name]
+- Specific action
+- Insert `[NEEDS CLARIFICATION: question]` for unclear points (max 3)
 
-### 2. [ステップ名]
-- 具体的なアクション
+### 2. [Step name]
+- Specific action
 
-### 3. 結果出力
-- 下記の出力形式に従って報告
+### 3. Output Results
+- Report following the output format below
 
-## 出力形式
+## Output Format
 
 \`\`\`markdown
-# [タイトル]
+# [Title]
 
-## [セクション]
-[内容]
+## [Section]
+[Content]
 \`\`\`
 
 
-## 成功基準
+## Success Criteria
 
-このコマンドの実行は以下を満たしたとき成功とみなす:
+This command execution is considered successful when:
 
-1. [具体的かつ検証可能な基準1]
-2. [具体的かつ検証可能な基準2]
+1. [Specific and verifiable criterion 1]
+2. [Specific and verifiable criterion 2]
 
-## 完了チェックリスト
+## Completion Checklist
 
-結果報告前に以下をすべて確認。未達成項目があれば修正してから報告:
+Verify all items before reporting. Fix any incomplete items before reporting:
 
-- [ ] 前提条件をすべて満たした
-- [ ] [コマンド固有のチェック項目]
-- [ ] 出力形式に従っている
+- [ ] All prerequisites met
+- [ ] [Command-specific check item]
+- [ ] Output format followed
 
-## 原則
+## Principles
 
-- [このコマンドの原則・注意点]
+- [Principles/notes for this command]
 ```
 
-## 必須要素
+## Required Elements
 
-| 要素 | 目的 |
-|-----|------|
-| YAML frontmatter | メタデータ（name, description, usage） |
-| 前提条件 | 実行前の検証、失敗時は中止 |
-| 番号付き実行手順 | 順序の明確化、確実な実行 |
-| 出力形式 | 一貫した結果報告 |
-| 成功基準 | 達成すべき結果の明示、曖昧さ排除 |
-| 完了チェックリスト | 自己検証、品質担保 |
+| Element | Purpose |
+|---------|---------|
+| YAML frontmatter | Metadata (name, description, usage) |
+| Prerequisites | Pre-execution validation, abort on failure |
+| Numbered execution steps | Clear ordering, reliable execution |
+| Output format | Consistent result reporting |
+| Success criteria | Explicit goals, eliminate ambiguity |
+| Completion checklist | Self-verification, quality assurance |
 
-## 設計原則
+## Design Principles
 
-### 前提条件
-- 実行に必要な最小限の条件を列挙
-- 満たさない場合は**中止**し理由を報告（黙って続行しない）
+### Prerequisites
+- List minimum conditions required for execution
+- **Abort** and report reason if not met (don't silently continue)
 
-### 実行手順
-- 番号付きで順序を明確化
-- 各ステップは具体的なアクションを含む
-- 曖昧な場合は `[NEEDS CLARIFICATION: 質問]` を使用（最大3箇所）
+### Execution Steps
+- Use numbered steps for clear ordering
+- Each step includes specific actions
+- Use `[NEEDS CLARIFICATION: question]` for ambiguous cases (max 3)
 
-### 成功基準
-- ユーザー視点で「何が達成されれば成功か」を明示
-- 具体的かつ検証可能な形で記述（曖昧な表現を避ける）
-- 完了チェックリストとの違い: 成功基準は**結果**、チェックリストは**手順**
+### Success Criteria
+- Explicitly state "what must be achieved" from user perspective
+- Write in specific, verifiable terms (avoid vague expressions)
+- Difference from checklist: Success criteria = **results**, Checklist = **process**
 
-### 完了チェックリスト
-- 報告前の自己検証（"英語のユニットテスト"）
-- 未達成項目があれば**修正してから報告**
-- 最大3回リトライ、それでも解決しない場合はユーザーに警告
+### Completion Checklist
+- Self-verification before reporting (like unit tests for your work)
+- **Fix incomplete items before reporting**
+- Retry up to 3 times; warn user if still unresolved
 
-## 例: Bad vs Good
+## Example: Bad vs Good
 
-### Bad: 曖昧な指示
+### Bad: Vague instructions
 ```markdown
-## 手順
-- コードを確認する
-- 問題があれば報告する
+## Steps
+- Review the code
+- Report if there are problems
 ```
 
-### Good: 具体的な指示
+### Good: Specific instructions
 ```markdown
-## 前提条件
-以下を確認してから実行。満たさない場合は中止し理由を報告:
-1. 対象ファイルが存在する
-2. `.ai/context.md` が読み込み可能
+## Prerequisites
+Verify the following before execution. Abort and report reason if not met:
+1. Target file exists
+2. `.ai/context.md` is readable
 
-## 実行手順
-### 1. 対象特定
-- 引数がファイルパス → そのファイルを対象
-- 引数なし → 現在のブランチの差分を対象
+## Execution Steps
+### 1. Identify Target
+- If argument is file path → that file is the target
+- If no argument → current branch diff is the target
 
-### 2. コード確認
-- 命名規約の遵守をチェック
-- エラーハンドリングの適切さをチェック
+### 2. Code Review
+- Check naming convention compliance
+- Check error handling appropriateness
 
-## 完了チェックリスト
-- [ ] 前提条件をすべて満たした
-- [ ] 各指摘に具体的な修正案を記載した
+## Completion Checklist
+- [ ] All prerequisites met
+- [ ] Each issue includes specific fix suggestion
 ```

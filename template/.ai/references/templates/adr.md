@@ -1,17 +1,17 @@
-# ADR (Architecture Decision Record) テンプレート
+# ADR (Architecture Decision Record) Template
 
-アーキテクチャ上の決定事項を記録するためのテンプレート。
+Template for documenting architectural decisions.
 
-## 使用タイミング
+## When to Use
 
-- アーキテクチャに影響する決定をしたとき
-- 複数の選択肢から1つを選んだとき
-- 将来「なぜこうなっているか」を説明する必要があるとき
+- When making architecture-impacting decisions
+- When choosing one option from multiple alternatives
+- When future explanation of "why this is so" will be needed
 
-## テンプレート
+## Template
 
 ```markdown
-# ADR-[番号]: [タイトル]
+# ADR-[number]: [Title]
 
 ## Status
 
@@ -19,75 +19,75 @@
 
 ## Context
 
-### 背景
-[どのような状況でこの決定が必要になったか]
+### Background
+[What situation required this decision]
 
-### 制約条件
-- [技術的制約]
-- [ビジネス制約]
-- [期限等]
+### Constraints
+- [Technical constraints]
+- [Business constraints]
+- [Deadlines, etc.]
 
-### 検討した選択肢
+### Options Considered
 
-**選択肢A: [名前]**
-- 概要: [説明]
-- 利点: [メリット]
-- 欠点: [デメリット]
+**Option A: [name]**
+- Overview: [description]
+- Pros: [advantages]
+- Cons: [disadvantages]
 
-**選択肢B: [名前]**
-- 概要: [説明]
-- 利点: [メリット]
-- 欠点: [デメリット]
+**Option B: [name]**
+- Overview: [description]
+- Pros: [advantages]
+- Cons: [disadvantages]
 
 ## Decision
 
-### 採用する設計
-[選択した設計案]
+### Adopted Design
+[The chosen design]
 
-### 理由
-1. [理由1]
-2. [理由2]
-3. [理由3]
+### Rationale
+1. [Reason 1]
+2. [Reason 2]
+3. [Reason 3]
 
 ## Consequences
 
 ### Positive
-- [良い影響1]
-- [良い影響2]
+- [Positive impact 1]
+- [Positive impact 2]
 
 ### Negative
-- [悪い影響1]
-- [悪い影響2]
+- [Negative impact 1]
+- [Negative impact 2]
 
-### Mitigation（負の影響の緩和策）
-- [緩和策1]
-- [緩和策2]
+### Mitigation
+- [Mitigation strategy 1]
+- [Mitigation strategy 2]
 
 ## Notes
 
-### 関連ドキュメント
-- [関連するADRやドキュメントへのリンク]
+### Related Documents
+- [Links to related ADRs or documents]
 
-### 決定日
+### Decision Date
 [YYYY-MM-DD]
 ```
 
-## 保存先
+## Save Location
 
-`docs/decisions/ADR-[番号]-[slug].md`
+`docs/decisions/ADR-[number]-[slug].md`
 
-例: `docs/decisions/ADR-001-use-typescript.md`
+Example: `docs/decisions/ADR-001-use-typescript.md`
 
-## 命名規則
+## Naming Convention
 
-- 番号: 連番（001, 002, ...）
-- slug: ケバブケースの短い説明
+- Number: Sequential (001, 002, ...)
+- Slug: Short description in kebab-case
 
-## ステータスの意味
+## Status Meanings
 
-| Status | 意味 |
-|--------|------|
-| Proposed | 提案中（レビュー待ち） |
-| Accepted | 承認済み（実装可能） |
-| Deprecated | 非推奨（新規では使わない） |
-| Superseded | 置き換え済み（新しいADRを参照） |
+| Status | Meaning |
+|--------|---------|
+| Proposed | Under review |
+| Accepted | Approved (ready for implementation) |
+| Deprecated | Not recommended for new use |
+| Superseded | Replaced (refer to new ADR) |

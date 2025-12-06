@@ -1,7 +1,7 @@
 ---
 type: command
 name: code-review
-description: コードレビューを実行し、優先度別フィードバックを提供する
+description: Execute code review with priority-based feedback
 usage:
   - /code-review path/to/file.ts
   - /code-review src/features/
@@ -10,178 +10,178 @@ usage:
 ---
 # Code Review Command
 
-コードレビューを実行し、優先度別フィードバックを提供する。
+Execute code review and provide priority-based feedback.
 
-## 使用方法
+## Usage
 
 ```bash
-/code-review path/to/file.ts       # 特定ファイル
-/code-review src/features/         # ディレクトリ
-/code-review feature/branch-name   # 特定ブランチと main/master との差分
-/code-review                       # 引数なし（下記参照）
+/code-review path/to/file.ts       # Specific file
+/code-review src/features/         # Directory
+/code-review feature/branch-name   # Diff between specific branch and main/master
+/code-review                       # No argument (see below)
 ```
 
-引数なしの場合:
-- main/master 以外 → 現在のブランチと main/master との差分
-- main/master → ステージング済み・未ステージングの変更
+No argument behavior:
+- Not on main/master → Diff between current branch and main/master
+- On main/master → Staged and unstaged changes
 
-## 前提条件
+## Prerequisites
 
-以下を確認してから実行。満たさない場合は中止し理由を報告:
+Verify the following before execution. Abort and report reason if not met:
 
-1. レビュー対象のファイルが存在する
-2. `.ai/context.md` が読み込み可能
-3. `.ai/references/checklists/code-review.md` が存在する
+1. Target files exist
+2. `.ai/context.md` is readable
+3. `.ai/references/checklists/code-review.md` exists
 
-## 実行手順
+## Execution Steps
 
-### 1. 対象特定と規模判定
-- 引数がファイル/ディレクトリ → そのパスを対象
-- 引数がブランチ名 → main/master との差分を取得
-- 引数なし → 現在のブランチを判定し上記ルールに従う
-- **規模判定**:
-  - 変更ファイル数と総変更行数を確認
-  - 大規模変更（50ファイル超 or 1000行超）の場合:
-    - ユーザーに通知し、Critical/High のみ先行レビューを提案
-    - 承諾時: Critical/High → 結果報告 → Medium/Low は別途実施
-    - 拒否時: 全項目を一括レビュー（時間がかかる旨を警告）
+### 1. Identify Target and Assess Scale
+- Argument is file/directory → Use that path
+- Argument is branch name → Get diff from main/master
+- No argument → Determine current branch and follow above rules
+- **Scale assessment**:
+  - Check number of changed files and total changed lines
+  - For large changes (50+ files or 1000+ lines):
+    - Notify user, propose Critical/High only first
+    - If accepted: Critical/High → Report → Medium/Low separately
+    - If declined: Review all at once (warn about time required)
 
-### 2. ドメイン知識収集
-- context.md の制約・クリティカル領域を確認
-- docs/ からドメイン知識を収集（存在する場合）
-- 重要ドメイン（決済、認証等）を特定
+### 2. Collect Domain Knowledge
+- Check context.md constraints and critical areas
+- Collect domain knowledge from docs/ (if exists)
+- Identify critical domains (payment, auth, etc.)
 
-### 3. 自動チェック実行
-- テスト、Lint、ビルドを実行
-- **失敗時は修正を促し、レビューを中止**
-- 通過後にレビュー開始
+### 3. Run Automated Checks
+- Run tests, lint, build
+- **On failure, prompt fixes and abort review**
+- Start review after passing
 
-### 4. レビュー実行
-- `.ai/references/checklists/code-review.md` を読み込む
-- チェックリスト内の「→ 用語定義:」リンク先をすべて読み込む
-- Critical → High → Medium → Low の順でチェック
-- MR説明の背景情報（調査結果、実行計画等）を活用し、設計判断の妥当性を評価
-- 一般的パターンからの逸脱は選択肢を提示（現状維持推奨でも却下案を明記）
-- 重要ドメインは厳格チェック（下記参照）
+### 4. Execute Review
+- Load `.ai/references/checklists/code-review.md`
+- Load all files linked via "→ Definition:" in checklist
+- Check in order: Critical → High → Medium → Low
+- Leverage MR description context (research, execution plans) to evaluate design decisions
+- For deviations from common patterns, present alternatives (include rejection as an option even when recommending the current approach)
+- Apply strict checks on critical domains (see below)
 
-### 5. 自己検証（Self-Reflection）
+### 5. Self-Reflection
 
-レビュー結果を出力する前に、各指摘を以下の観点で再検証。
-不正確なものは除外し、スコアを調整:
+Before outputting results, re-verify each issue against these criteria.
+Remove inaccurate ones and adjust scores:
 
-1. **位置検証**: 指摘した `ファイル:行番号` に該当コードが存在するか
-   - 存在しない → 除外（確信度0）
+1. **Location verification**: Does the specified `file:line` contain the cited code?
+   - Not found → Remove (confidence 0)
 
-2. **構文検証**: 修正案を適用した場合、構文エラーにならないか
-   - エラーになる → 修正案を修正、または除外
+2. **Syntax verification**: Would applying the fix cause syntax errors?
+   - Would cause error → Fix the suggestion or remove
 
-3. **コンテキスト整合**: 修正案が周辺コード・既存実装と矛盾しないか
-   - 矛盾する → 確信度を下げる（-2〜3）
+3. **Context consistency**: Does the fix conflict with surrounding code/existing implementation?
+   - Conflicts → Lower confidence (-2 to 3)
 
-4. **重複排除**: 同一問題への複数指摘がないか
-   - 重複あり → 最も適切な1つに統合
+4. **Deduplication**: Are there multiple issues pointing to the same problem?
+   - Duplicates found → Merge into most appropriate one
 
-5. **過剰指摘フィルタ**: 以下に該当する指摘は除外
-   - Lint/Formatter で自動修正可能なもの
-   - 単なるスタイル好みの押し付け
-   - 明確な根拠なく「〜すべき」と主張するもの
+5. **Over-reporting filter**: Remove issues matching:
+   - Auto-fixable by lint/formatter
+   - Merely pushing style preferences
+   - Asserting "should do X" without clear rationale
 
-### 6. 結果出力
-- 下記の出力形式に従って報告
+### 6. Output Results
+- Report following the output format below
 
-## 出力形式
+## Output Format
 
 ```markdown
-# コードレビュー結果: [対象]
+# Code Review Results: [target]
 
 ## Critical
-### 1. `file.ts:42` - [問題の簡潔な説明] (確信度: 9/10)
+### 1. `file.ts:42` - [Brief problem description] (Confidence: 9/10)
 
-**問題**: [具体的な問題点]
-**根拠**: [なぜこれが問題と判断したか - コードの具体的な箇所を引用]
+**Problem**: [Specific issue]
+**Rationale**: [Why this is problematic - cite specific code]
 
-**修正案**:
-| 選択肢 | 概要 | 理由 |
-|--------|------|------|
-| A (推奨) | [修正案A] | [なぜこれが最も推奨されるか] |
-| B | [修正案B] | [利点と欠点] |
+**Fix Options**:
+| Option | Overview | Reason |
+|--------|----------|--------|
+| A (recommended) | [Fix A] | [Why this is most recommended] |
+| B | [Fix B] | [Pros and cons] |
 
 ## High / Medium / Low
-（同様の形式）
+(Same format)
 
-## 総評
-指摘: Critical X, High X, Medium X, Low X
-次のアクション: [推奨事項]
+## Summary
+Issues: Critical X, High X, Medium X, Low X
+Next Actions: [Recommendations]
 
-## 参照したドキュメント
+## Referenced Documents
 - `.ai/references/checklists/code-review.md`
 - `.ai/references/glossaries/xxx.md`
-- （読み込んだすべてのドキュメントを列挙）
+- (List all loaded documents)
 ```
 
-### 必須フィールド
+### Required Fields
 
-各指摘には以下を必ず含める:
+Each issue must include:
 
-| フィールド | 説明 |
-|-----------|------|
-| ファイル:行番号 | 正確な位置（存在確認済み） |
-| 問題 | 何が問題か（1-2文） |
-| 確信度 | 1-10のスコア |
-| 根拠 | なぜ問題と判断したか（コード引用必須） |
-| 修正案テーブル | 選択肢・概要・理由（推奨は選択肢名に明記） |
+| Field | Description |
+|-------|-------------|
+| File:line | Accurate location (verified to exist) |
+| Problem | What's wrong (1-2 sentences) |
+| Confidence | Score 1-10 |
+| Rationale | Why it's problematic (must cite code) |
+| Fix options table | Options, overview, reason (mark recommended) |
 
-### 確信度の基準
+### Confidence Criteria
 
-| スコア | 意味 | 例 |
-|--------|------|-----|
-| 9-10 | 明確な問題 | バグ、セキュリティ脆弱性、データ損失リスク |
-| 7-8 | 高確度で問題 | N+1クエリ、未処理例外、境界値漏れ |
-| 5-6 | 改善推奨 | 可読性低下、責務混在、テスト不足 |
-| 3-4 | 提案レベル | 命名改善、リファクタリング候補 |
-| 1-2 | 参考情報 | 別解の紹介、将来の検討事項 |
+| Score | Meaning | Examples |
+|-------|---------|----------|
+| 9-10 | Clear problem | Bug, security vulnerability, data loss risk |
+| 7-8 | High confidence problem | N+1 query, unhandled exception, missed edge case |
+| 5-6 | Improvement recommended | Poor readability, mixed responsibilities, insufficient tests |
+| 3-4 | Suggestion level | Naming improvements, refactoring candidates |
+| 1-2 | For reference | Alternative approaches, future considerations |
 
-**注意**: 確信度5以下は「議論の余地あり」を意味する。レビュイーが意図的な選択であれば却下可能。
+**Note**: Confidence 5 or below means "debatable." Can be rejected if reviewee's intentional choice.
 
-## 成功基準
+## Success Criteria
 
-このコマンドの実行は以下を満たしたとき成功とみなす:
+This command execution is considered successful when:
 
-1. 問題点が優先度別（Critical/High/Medium/Low）に整理されている
-2. 各指摘に確信度スコア・根拠・具体的な修正案が含まれている
-3. 自動チェック（テスト、Lint、ビルド）が通過している
-4. 自己検証（Self-Reflection）を実施し、不正確な指摘を除外済み
+1. Issues organized by priority (Critical/High/Medium/Low)
+2. Each issue includes confidence score, rationale, and specific fix options
+3. Automated checks (tests, lint, build) passed
+4. Self-reflection performed and inaccurate issues removed
 
-## 重要ドメイン特別ルール
+## Critical Domain Rules
 
-context.md や docs/ で定義された重要ドメイン配下のコードには以下を厳格に適用:
+Apply strict checks for code under critical domains defined in context.md or docs/:
 
-- **冪等性**: 同じリクエストを2回送っても安全
-- **トランザクション管理**: 複数更新はアトミック
-- **高テストカバレッジ**: 重要ロジックは全パターン網羅
-- **エラーハンドリング**: タイムアウト、ネットワークエラー等を明示的に処理
+- **Idempotency**: Safe to send same request twice
+- **Transaction management**: Multi-updates are atomic
+- **High test coverage**: Critical logic covers all patterns
+- **Error handling**: Explicit handling of timeout, network errors, etc.
 
-## 完了チェックリスト
+## Completion Checklist
 
-結果報告前に以下をすべて確認。未達成項目があれば修正してから報告:
+Verify all items before reporting. Fix incomplete items before reporting:
 
-- [ ] 前提条件をすべて満たした
-- [ ] 自動チェック（テスト、Lint、ビルド）を実行した
-- [ ] チェックリストの全項目を確認した
-- [ ] チェックリスト内の「→ 用語定義:」リンク先をすべて読み込んだ
-- [ ] 各指摘の行番号が正確（該当コードが存在する）
-- [ ] 各指摘に確信度スコアと根拠を記載した
-- [ ] 自己検証で重複・過剰指摘を除外した
-- [ ] 大規模変更の場合、段階的レビューを提案した
-- [ ] 優先度（Critical/High/Medium/Low）が適切
-- [ ] 出力形式に従っている
-- [ ] 参照したドキュメント一覧を記載した
+- [ ] All prerequisites met
+- [ ] Ran automated checks (tests, lint, build)
+- [ ] Verified all checklist items
+- [ ] Loaded all "→ Definition:" linked files in checklist
+- [ ] Line numbers are accurate (cited code exists)
+- [ ] Each issue has confidence score and rationale
+- [ ] Self-reflection removed duplicates/over-reported issues
+- [ ] Proposed staged review for large changes
+- [ ] Priority levels (Critical/High/Medium/Low) appropriate
+- [ ] Followed output format
+- [ ] Listed all referenced documents
 
-## 原則
+## Principles
 
-- 優先順位を明確に、具体的な修正案と根拠を提示
-- 曖昧な指摘、主観の押し付け、Lint自動化可能な指摘は避ける
+- Clear priorities, present specific fixes with rationale
+- Avoid vague feedback, subjective preferences, lint-automatable issues
 
-## 関連
+## Related
 
-- `/review-update` - レビューの学びをチェックリスト・コマンドに反映
+- `/review-update` - Reflect review learnings to checklist/command

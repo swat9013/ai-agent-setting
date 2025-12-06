@@ -1,101 +1,101 @@
 ---
 type: command
 name: context-update
-description: セッションを振り返り、コンテキストファイルを更新する
+description: Reflect on session and update context files
 usage:
   - /context-update
 ---
 
 # Context Update Command
 
-セッションを振り返り、コンテキストを更新する。
+Reflect on session and update context.
 
-## 前提
+## Premise
 
-- `.ai/context.md` が唯一の真実の源（SSOT）
-- `AGENTS.md`, `CLAUDE.md` 等は `sync-context.py` で自動生成される出力
-- 編集は必ず `.ai/context.md` に対して行う
+- `.ai/context.md` is the single source of truth (SSOT)
+- `AGENTS.md`, `CLAUDE.md`, etc. are auto-generated outputs by `sync-context.py`
+- Edits must be made to `.ai/context.md`
 
-## 前提条件
+## Prerequisites
 
-以下を確認してから実行。満たさない場合は中止し理由を報告:
+Verify the following before execution. Abort and report reason if not met:
 
-1. `.ai/context.md` が存在し読み込み可能
-2. 保存すべき学びや設計判断がセッション内に存在する
+1. `.ai/context.md` exists and is readable
+2. Session contains learnings or design decisions worth saving
 
-## 実行手順
+## Execution Steps
 
-### 1. 抽出
-保存すべき内容を特定：
-- 新しく学んだこと、設計判断とその理由、落とし穴
-- 3回以上繰り返された説明・指摘・ワークフロー
-- コードレビューで繰り返し指摘された問題
+### 1. Extract
+Identify content to save:
+- New learnings, design decisions and their rationale, pitfalls
+- Explanations, feedback, or workflows repeated 3+ times
+- Problems repeatedly raised in code reviews
 
-### 2. 整合性チェック
-- 矛盾・重複・古い情報がないか確認
+### 2. Consistency Check
+- Verify no contradictions, duplicates, or stale information
 
-### 3. 規模チェック
+### 3. Size Check
 ```bash
 python3 .ai/scripts/measure-context.py
 ```
-閾値超過時は追記前に圧縮。
+Compress before adding if threshold exceeded.
 
-### 4. 保存先判断
+### 4. Determine Save Location
 
-| 種類 | 保存先 |
-|-----|-------|
-| プロジェクト全般ルール | .ai/context.md |
-| 設計判断（ADR形式） | docs/decisions/ |
-| 詳細ガイドライン | docs/guidelines/ |
-| 新規エージェント/コマンド | .ai/agents/ or .ai/commands/ |
+| Type | Location |
+|------|----------|
+| Project-wide rules | .ai/context.md |
+| Design decisions (ADR format) | docs/decisions/ |
+| Detailed guidelines | docs/guidelines/ |
+| New agents/commands | .ai/agents/ or .ai/commands/ |
 
-ADRテンプレート: `.ai/references/templates/adr.md`
+ADR template: `.ai/references/templates/adr.md`
 
-エージェント＝対話・相談向け、コマンド＝アクション実行。1:1対応ならコマンドに統合。
+Agents = dialog/consultation, Commands = action execution. Merge into command if 1:1 correspondence.
 
-### 5. 同期
-context.md 更新後は各ツール向けファイルを同期:
+### 5. Sync
+After updating context.md, sync to tool-specific files:
 ```bash
 python3 .ai/scripts/sync-context.py
 ```
-同期先: `AGENTS.md`, `CLAUDE.md`, `.cursor/`, `.github/instructions/`, `.claude/`
+Sync targets: `AGENTS.md`, `CLAUDE.md`, `.cursor/`, `.github/instructions/`, `.claude/`
 
-## 圧縮方針
-1. 重複統合  2. 表現簡潔化  3. 詳細は docs/ へ分離  4. 古い情報は削除
+## Compression Strategy
+1. Merge duplicates  2. Simplify expressions  3. Move details to docs/  4. Remove stale info
 
-## 出力形式
+## Output Format
 ```
-### 変更サマリー
-- 追加/修正/削除: X件、圧縮: 実施/不要
+### Change Summary
+- Added/Modified/Deleted: X items, Compression: Done/Not needed
 
-### 更新内容
-[差分または全文]
+### Updates
+[Diff or full content]
 ```
 
-## 成功基準
+## Success Criteria
 
-このコマンドの実行は以下を満たしたとき成功とみなす:
+This command execution is considered successful when:
 
-1. セッションで得た学びが再利用可能な形で保存されている
-2. context.mdが閾値内（200行以下推奨）に収まっている
-3. 既存の内容と矛盾・重複がない
+1. Session learnings saved in reusable form
+2. context.md within threshold (200 lines or less recommended)
+3. No contradictions/duplicates with existing content
 
-## 完了チェックリスト
+## Completion Checklist
 
-結果報告前に以下をすべて確認。未達成項目があれば修正してから報告:
+Verify all items before reporting. Fix incomplete items before reporting:
 
-- [ ] 前提条件をすべて満たした
-- [ ] 抽出内容が具体的で再利用可能
-- [ ] 既存の内容と矛盾・重複がない
-- [ ] 規模チェックを実行し、閾値内に収まっている
-- [ ] 適切な保存先に振り分けた
-- [ ] `sync-context.py` を実行した（または実行を促した）
-- [ ] 出力形式に従っている
+- [ ] All prerequisites met
+- [ ] Extracted content is specific and reusable
+- [ ] No contradictions/duplicates with existing content
+- [ ] Ran size check, within threshold
+- [ ] Distributed to appropriate save locations
+- [ ] Ran `sync-context.py` (or prompted to run)
+- [ ] Followed output format
 
-## 原則
+## Principles
 
-- 最小限の高シグナル情報で効果最大化
-- 適切な抽象度（硬直的すぎず曖昧すぎず）
-- 実践に必要な知識のみ記載（歴史的経緯や比較用の対立概念は不要）
-- 詳細リンクは分離時のみ追加
-- AIが既知の概念は「〜に準拠」で十分
+- Maximize effect with minimal high-signal information
+- Appropriate abstraction level (not too rigid, not too vague)
+- Only practical knowledge needed (no historical context or opposing concepts for comparison)
+- Add detail links only when separated
+- For concepts AI knows, "follows X standard" is sufficient

@@ -1,26 +1,26 @@
-# 抽象レベル リファレンス
+# Abstraction Level Reference
 
-## SLAP（Single Level of Abstraction Principle）
+## SLAP (Single Level of Abstraction Principle)
 
-**定義**: 1つの関数内では、同じ抽象度の処理のみを記述する
+**Definition**: Keep all code within a single function at the same abstraction level.
 
-## 抽象レベルの判断基準
+## Abstraction Level Criteria
 
-| レベル | 特徴 | 例 |
-|--------|------|-----|
-| **高** | 「何をするか」を表現 | validateOrder(), sendNotification() |
-| **中** | ビジネスルールの実装 | if (order.total > limit), items.filter() |
-| **低** | 技術的詳細 | db.query(), JSON.parse(), for loops |
+| Level | Characteristics | Examples |
+|-------|-----------------|----------|
+| **High** | Expresses "what to do" | validateOrder(), sendNotification() |
+| **Medium** | Business rule implementation | if (order.total > limit), items.filter() |
+| **Low** | Technical details | db.query(), JSON.parse(), for loops |
 
-## 違反例と修正
+## Violation Example and Fix
 
 ```typescript
-// ❌ 抽象レベル混在
+// ❌ Mixed abstraction levels
 async function processOrder(orderId: string) {
-  // 高: 何をするか
+  // High: what to do
   const order = await getOrder(orderId);
 
-  // 低: 技術的詳細が混入
+  // Low: technical details leak in
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -30,26 +30,26 @@ async function processOrder(orderId: string) {
     conn.release();
   }
 
-  // 高: 何をするか
+  // High: what to do
   await notifyCustomer(order);
 }
 
-// ✅ 同じ抽象レベルで統一
+// ✅ Unified at same abstraction level
 async function processOrder(orderId: string) {
-  const order = await getOrder(orderId);      // 高
-  await updateStatus(order, 'processing');    // 高
-  await notifyCustomer(order);                // 高
+  const order = await getOrder(orderId);      // High
+  await updateStatus(order, 'processing');    // High
+  await notifyCustomer(order);                // High
 }
 
 async function updateStatus(order: Order, status: string) {
-  // 低レベルの詳細はここに集約
+  // Low-level details consolidated here
   const conn = await pool.getConnection();
   // ...
 }
 ```
 
-## 判断のヒント
+## Judgment Hints
 
-- **関数名と中身が合っているか？**: processOrder の中に SQL があれば違和感
-- **説明するとき「そして」で繋げられるか？**: 同じレベルなら自然に繋がる
-- **一部だけ変更が必要になるか？**: DB変更時にビジネスロジックまで触るなら混在の兆候
+- **Does the function name reflect its contents?**: SQL inside processOrder feels wrong
+- **Can steps be connected with "and then"?**: Same-level operations connect naturally
+- **Does a partial change require touching unrelated code?**: If DB changes require business logic edits, the levels are mixed
