@@ -36,11 +36,12 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 |---------|--------|
 | template/.ai/context.md | プロジェクトのコーディング方針を記載。コンテキスト記述ルール自体は書かない。穴埋め形式を維持 |
 | template/.ai/agents/*.md | 対話向け（設計相談等）のみ。アクション実行はコマンドへ |
-| template/.ai/commands/*.md | ツール非依存を維持。1:1対応ならエージェントと統合。設計パターンは下記参照 |
+| template/.ai/commands/*.md | ツール非依存を維持。1:1対応ならエージェントと統合。詳細は references/ に分離 |
 | template/.ai/references/ | チェックリスト・テンプレート等の参照用ファイル |
 | template/.ai/scripts/*.py | Python 3 標準ライブラリのみ使用（追加インストール不要） |
 | examples/**/context.md | 実際に使える具体例を記載 |
 | plan.md | 一時ファイル。docs/やwork/に保存しない。プロジェクトルートに配置し実装後削除 |
+| implementation.md | plan.md から生成される実行計画。プロジェクトルートに配置し実装後削除 |
 
 ### エージェント vs コマンドの使い分け
 
@@ -49,7 +50,9 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 | エージェント | 対話・相談向け | architect（設計相談） |
 | コマンド | アクション実行 | /code-review（レビュー実行） |
 
-**判断基準**: 1:1対応ならコマンドに統合してシンプルに保つ
+**判断基準**:
+- 1:1対応ならコマンドに統合してシンプルに保つ
+- 一つのことをうまくやる（Unix哲学）: 複合機能は分離（例: breakdown と implement）
 
 ### コマンド設計パターン
 
