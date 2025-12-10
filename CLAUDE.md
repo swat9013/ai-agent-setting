@@ -14,11 +14,18 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 
 ```
 ├── template/          # 配布される本体（ここを編集）
+├── .claude/skills/    # Claude Code専用Skills（このリポジトリ固有）
 ├── docs/              # 設計書・ガイド
 ├── examples/          # 技術スタック別サンプル
 ├── install.sh         # インストーラー
 └── CHANGELOG.md       # 変更履歴（リリース時に更新必須）
 ```
+
+### Skills
+
+| Skill | 用途 |
+|-------|------|
+| context-advisor | template/配下のコンテキストファイル改善アドバイザー |
 
 ## 開発方針
 
