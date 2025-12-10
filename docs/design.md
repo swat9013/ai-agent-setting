@@ -22,7 +22,6 @@
 | Cursor | `.cursorrules`, `.cursor/rules/` | ✅ カスタムコマンド |
 | GitHub Copilot | `.github/copilot-instructions.md` | ✅ スラッシュコマンド |
 | Claude Code | `CLAUDE.md`, `AGENTS.md` | ✅ カスタムコマンド |
-| Codex CLI | `AGENTS.md`, プロジェクトドキュメント | ✅ コマンド |
 
 ---
 
@@ -467,9 +466,9 @@ echo "✅ Context structure initialized!"
 [1〜2文で簡潔に]
 
 ## 技術スタック
-- 言語: 
-- フレームワーク: 
-- 主要ライブラリ: 
+- 言語:
+- フレームワーク:
+- 主要ライブラリ:
 
 ## コーディング方針
 [適切な抽象度で記述]
@@ -751,7 +750,7 @@ curl -sO https://raw.githubusercontent.com/swat9013/ai-agent-setting/main/templa
 # 3. または差分を確認して手動マージ
 ```
 
-**注意**: プロジェクト固有のカスタマイズは `context.md` に集中するため、  
+**注意**: プロジェクト固有のカスタマイズは `context.md` に集中するため、
 コマンドやスクリプトは比較的安全に更新できる。
 
 ### 11.6 バージョニング方針
@@ -867,5 +866,5 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 
 ---
 
-*Document Version: 2.0.0*  
+*Document Version: 2.0.0*
 *Last Updated: 2025-06*

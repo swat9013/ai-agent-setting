@@ -8,12 +8,11 @@ AIコーディングアシスタント（Cursor、Claude Code、GitHub Copilot�
 
 ### 対応ツール
 
-| ツール | コンテキストファイル | 同期対象 |
-|--------|---------------------|----------|
-| Cursor | `.cursorrules`, `.cursor/rules/` | ✅ |
-| GitHub Copilot | `.github/copilot-instructions.md` | ✅ |
-| Claude Code | `CLAUDE.md` | ✅ |
-| Codex CLI | `AGENTS.md` | ✅ |
+| ツール         | コンテキストファイル                 | 同期対象 |
+| -------------- | ------------------------------------ | -------- |
+| Cursor         | `.cursorrules`, `.cursor/rules/` | ✅       |
+| GitHub Copilot | `.github/copilot-instructions.md`  | ✅       |
+| Claude Code    | `CLAUDE.md`                        | ✅       |
 
 ## クイックスタート
 

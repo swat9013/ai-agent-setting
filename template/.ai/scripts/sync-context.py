@@ -9,8 +9,8 @@ Output:
     - .cursor/commands/*.md: Slash commands (invoked with /)
 
   GitHub Copilot:
-    - AGENTS.md: Project context + agents (shared with Cursor)
-    - .github/instructions/*.instructions.md: Commands as path-specific instructions
+    - AGENTS.md: Project context (shared with Cursor)
+    - .github/prompts/*.prompt.md: Prompts (invoked with /name)
 
   Claude Code:
     - CLAUDE.md: Project context only
@@ -237,34 +237,33 @@ class CopilotWriter(ToolWriter):
     def write(self, context: str, agents: list[SourceItem], commands: list[SourceItem]) -> list[str]:
         outputs = []
         outputs.extend(self._write_context(context))
-        outputs.extend(self._write_instructions(agents, commands))
+        outputs.extend(self._write_prompts(agents, commands))
         return outputs
 
     def _write_context(self, context: str) -> list[str]:
         write_file(self.base_dir / "AGENTS.md", context)
         return ["AGENTS.md"]
 
-    def _write_instructions(self, agents: list[SourceItem], commands: list[SourceItem]) -> list[str]:
-        inst_dir = self.base_dir / ".github" / "instructions"
+    def _write_prompts(self, agents: list[SourceItem], commands: list[SourceItem]) -> list[str]:
+        prompts_dir = self.base_dir / ".github" / "prompts"
         count = 0
 
         for item in agents:
-            content = self._build_instruction(item.body)
-            write_file(inst_dir / f"agent-{item.stem}.instructions.md", content)
+            content = self._build_prompt(item.frontmatter.description, item.body)
+            write_file(prompts_dir / f"{item.stem}.prompt.md", content)
             count += 1
 
         for item in commands:
-            body = f"# /{item.frontmatter.name} Command\n\n{item.body}"
-            content = self._build_instruction(body)
-            write_file(inst_dir / f"command-{item.stem}.instructions.md", content)
+            content = self._build_prompt(item.frontmatter.description, item.body)
+            write_file(prompts_dir / f"{item.stem}.prompt.md", content)
             count += 1
 
         if count:
-            return [f".github/instructions/ ({count} instructions)"]
+            return [f".github/prompts/ ({count} prompts)"]
         return []
 
-    def _build_instruction(self, body: str) -> str:
-        fields = {"applyTo": '"**/*"'}
+    def _build_prompt(self, description: str, body: str) -> str:
+        fields = {"mode": "'agent'", "description": f"'{description}'" if description else ""}
         return build_frontmatter(fields) + body
 
 
