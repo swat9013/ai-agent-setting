@@ -8,6 +8,7 @@
 ## Critical
 ### 1. `file.ts:42` - [問題の簡潔な説明] (確信度: 9/10)
 
+**観点**: security | reliability | performance | architecture | quality
 **問題**: [具体的な問題点]
 **根拠**: [なぜこれが問題と判断したか - コードの具体的な箇所を引用]
 
@@ -22,11 +23,11 @@
 
 ## 総評
 指摘: Critical X, High X, Medium X, Low X
+観点別: security X, reliability X, performance X, architecture X, quality X
 次のアクション: [推奨事項]
 
 ## 参照したドキュメント
-- `.ai/references/checklists/code-review.md`
-- `.ai/references/glossaries/xxx.md`
+- `.ai/references/checklists/code-review/[観点].md`
 - （読み込んだすべてのドキュメントを列挙）
 ```
 
@@ -37,6 +38,7 @@
 | フィールド | 説明 |
 |-----------|------|
 | ファイル:行番号 | 正確な位置（存在確認済み） |
+| 観点 | security / reliability / performance / architecture / quality |
 | 問題 | 何が問題か（1-2文） |
 | 確信度 | 1-10のスコア |
 | 根拠 | なぜ問題と判断したか（コード引用必須） |
