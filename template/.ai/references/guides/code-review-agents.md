@@ -1,6 +1,6 @@
 # コードレビュー観点別エージェントロール
 
-`/code-review` コマンドで使用する観点別のロール定義。sub-agent並列実行時に各エージェントに付与する。
+`/code-review` コマンドで使用する観点別のロール定義。各観点のpromptに埋め込んで使用する。
 
 ---
 
@@ -67,31 +67,4 @@
 - モデリングの改善提案は強制ではなく選択肢として提示
 - コメントは Why not を重視
 - YAGNI原則を尊重
-```
-
----
-
-## sub-agent呼び出し例
-
-```
-Task tool 呼び出し:
-- subagent_type: general-purpose
-- prompt: |
-    [ロール・原則（上記から選択）]
-
-    ## 担当チェックリスト
-    `.ai/references/checklists/code-review/${観点}.md`
-
-    ## レビュー対象
-    ${対象コード}
-
-    ## ドメイン知識
-    ${context.mdから抽出した制約・重要領域}
-
-    ## 出力形式
-    `.ai/references/templates/code-review-output.md` に従う
-
-    ## 制約
-    - 担当観点のみレビュー（他観点は別エージェントが担当）
-    - 確信度5以下は「議論の余地あり」として明記
 ```
