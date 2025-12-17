@@ -31,7 +31,7 @@ plan.md の実装方針から implementation.md を生成する。
 
 ### 2. コンテキスト読み込み
 - plan.md の内容を読み込み
-- context.md でプロジェクト固有の制約を確認
+- .ai/context.md でプロジェクト固有の制約を確認
 
 ### 3. タスク分解
 

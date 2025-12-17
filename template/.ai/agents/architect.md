@@ -31,7 +31,7 @@ triggers:
 
 ### 1. 要件理解
 - ユーザー要求の分析
-- context.md と docs/ の確認
+- .ai/context.md と docs/ の確認
 - 既存コードベースの構造把握
 
 ### 2. 現状分析

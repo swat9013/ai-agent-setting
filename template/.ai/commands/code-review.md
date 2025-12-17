@@ -22,7 +22,7 @@ usage:
 - 大規模変更（50ファイル超 or 1000行超）→ Critical/High先行レビューを提案
 
 ### 2. ドメイン知識収集
-- context.md、docs/ から制約・ドメイン知識を確認
+- .ai/context.md、docs/ から制約・ドメイン知識を確認
 
 ### 3. 自動チェック
 - テスト、Lint、ビルド実行。**失敗時は中止**
@@ -67,7 +67,7 @@ ${checklists/code-review/${観点}.mdの内容}
 ${対象コード}
 
 ## ドメイン知識
-${context.mdから抽出した制約}
+${.ai/context.mdから抽出した制約}
 
 ## 出力
 templates/code-review-output.md に従い、担当観点のみ報告

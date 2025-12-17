@@ -54,7 +54,7 @@ ADRテンプレート: `.ai/references/templates/adr.md`
 エージェント＝対話・相談向け、コマンド＝アクション実行。1:1対応ならコマンドに統合。
 
 ### 5. 同期
-context.md 更新後は各ツール向けファイルを同期:
+.ai/context.md 更新後は各ツール向けファイルを同期:
 ```bash
 python3 .ai/scripts/sync-context.py
 ```
@@ -77,7 +77,7 @@ python3 .ai/scripts/sync-context.py
 このコマンドの実行は以下を満たしたとき成功とみなす:
 
 1. セッションで得た学びが再利用可能な形で保存されている
-2. context.mdが閾値内（200行以下推奨）に収まっている
+2. .ai/context.mdが閾値内（200行以下推奨）に収まっている
 3. 既存の内容と矛盾・重複がない
 
 ## 完了チェックリスト
